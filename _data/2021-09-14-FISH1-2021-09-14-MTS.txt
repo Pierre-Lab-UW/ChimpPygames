@@ -1,0 +1,3 @@
+monkey_name, date, time, arm, task_name, trial, sample_image, touch_x, touch_y, correct
+FISH1, 2021-09-14, 11:28, NA, MTS, 1, 10.jpg, 380, 502, 1
+FISH1, 2021-09-14, 11:28, NA, MTS, 2, 105.jpg, 628, 520, 1

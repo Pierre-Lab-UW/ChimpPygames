@@ -1,0 +1,12 @@
+ITI (in msec)
+5000
+timeout (in msec)
+10000
+num pellets dispensed for correct (positive integer)
+1
+stimulus size (positive integer)
+768
+trials to check criterion (positive integer)
+20
+trials to achieve criterion (positive integer)
+18

@@ -1,0 +1,6 @@
+monkey_name, date, time, arm, task_name, trial, stim_size, touch_x, touch_y, correct
+FISH2, 2021-09-10, 11:58, L, SHAPE2, 2, 200, 671, 468, 1
+FISH2, 2021-09-10, 11:58, L, SHAPE2, 3, 200, 238, 506, 1
+FISH2, 2021-09-10, 11:58, L, SHAPE2, 4, 200, 387, 312, 1
+FISH2, 2021-09-10, 11:58, L, SHAPE2, 5, 200, 581, 492, 1
+FISH2, 2021-09-10, 12:00, L, SHAPE2, 1, 200, 709, 385, 1

@@ -1,0 +1,2 @@
+monkey_name, date, time, arm, task_name, trial, sample_image, sample_pos, num_sample+matches, touch_x, touch_y, correct
+GROUP, 2021-09-01, 09:37, L, MTSseq, 1, Beehive.jpg, right, 1, 604, 556, 1

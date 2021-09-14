@@ -1,0 +1,33 @@
+~@~@~@~@~@~@~@~@~ START OF ERRORLOG FOR 2021-08-31 ~@~@~@~@~@~@~@~@~====================================================
+     Date: 2021-08-31     Time: 15:51
+====================================================
+Loaded global params ::
+SCREEN_W :: 1024
+SCREEN_H :: 768
+CURSOR_VISIBLE :: True
+RESTRICT_SCREEN :: True
+AUTOSHAPING :: True
+TIME_TO_AUTOSHAPE :: 10
+STIMULI_COLORS :: normal
+HOST_CONNECTED :: True
+RFID_READER_CONNECTED :: False
+DRO_DURATION :: 1
+REWARD_TYPE :: pellet
+REWARD_AMOUNT :: 1
+DEBUG_WINDOW_ON :: True
+Loaded monkey params
+Screen loaded
+743 clipart loaded in 0.767 seconds
+pellet
+pellet
+User quit the program
+
+Traceback (most recent call last):
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 324, in <module>
+    frontend.main()
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 243, in main
+    check_quit(event=event)
+  File "C:\Users\wwhitham\Downloads\_programs\MonkeyTrain-main\MonkeyTrain-main\_modules\pgtools.py", line 153, in check_quit
+    raise SystemExit
+SystemExit
+

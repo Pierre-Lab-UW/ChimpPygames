@@ -1,0 +1,26 @@
+screen width
+1024
+screen height
+768
+cursor visible :: True or False
+True
+restrict screen :: True or False
+True
+autoshaping :: True or False
+True
+autoshaping time (in minutes)
+10
+color stimuli (normal or RGblind)
+normal
+host connected :: True or False :: I think this no longer does anything?
+True
+RFID reader connected :: True or False
+False
+DRO length (in seconds)
+1
+reward type (pellet or liquid)
+pellet
+reward amount (# of dispenses)
+1
+debug window on :: True or False
+True

@@ -1,0 +1,43 @@
+
+ ~@~@~@~@~@~@~@~@~ START OF ERRORLOG FOR 2021-09-02 ~@~@~@~@~@~@~@~@~
+Traceback (most recent call last):
+  File "MonkeyTrain_frontend.py", line 349, in <module>
+    frontend.main()
+  File "MonkeyTrain_frontend.py", line 214, in main
+    tag = self.get_id()
+  File "MonkeyTrain_frontend.py", line 105, in get_id
+    format(time.strftime('%Y-%m-%d'), read, converted_read, int(converted_read)))
+ValueError: invalid literal for int() with base 10: ''
+
+error converting 
+error converting 
+error converting 
+error converting 
+error converting 
+error converting 
+error converting 
+error converting 
+2021-09-02 :: unconverted read: 989_002009229212 :: converted read: 989002009229212 :: int converted: 989002009229212
+error converting 
+2021-09-02 :: unconverted read: 989_002009229212 :: converted read: 989002009229212 :: int converted: 989002009229212
+error converting 
+error converting 
+2021-09-02 :: unconverted read: 989_002009112544 :: converted read: 989002009112544 :: int converted: 989002009112544
+error converting 
+error converting 
+error converting 
+2021-09-02 :: unconverted read: 989_002009112544 :: converted read: 989002009112544 :: int converted: 989002009112544
+error converting 
+error converting 
+error converting 
+User quit the program
+
+Traceback (most recent call last):
+  File "MonkeyTrain_frontend.py", line 351, in <module>
+    frontend.main()
+  File "MonkeyTrain_frontend.py", line 270, in main
+    check_quit(event=event)
+  File "/mnt/PiShare/MonkeyTrain/_modules/pgtools.py", line 141, in check_quit
+    raise SystemExit
+SystemExit
+

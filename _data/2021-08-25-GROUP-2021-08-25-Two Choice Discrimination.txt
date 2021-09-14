@@ -1,0 +1,8 @@
+monkey_name, date, time, arm, task_name, trial, set, posImage, negImage, touch_x, touch_y, pos_x, pos_y, neg_x, neg_y, correct
+GROUP, 2021-08-25, 14:55, L, Two Choice Discrimination, 1, TurkeyColorful.jpg, GreenLantern.jpg, 592, 302, True
+GROUP, 2021-08-25, 14:56, L, Two Choice Discrimination, 1, Pencilhouse.jpg, Sally.jpg, 760, 483, False
+GROUP, 2021-08-25, 14:57, L, Two Choice Discrimination, 1, 300.jpg, Hieroglyphics2.jpg, 291, 486, False
+GROUP, 2021-08-25, 14:57, L, Two Choice Discrimination, 1, 300.jpg, Hieroglyphics2.jpg, 322, 423, True
+GROUP, 2021-08-25, 14:59, L, Two Choice Discrimination, 1, 300.jpg, Hieroglyphics2.jpg, 378, 641, True
+GROUP, 2021-08-25, 15:10, L, Two Choice Discrimination, 1, Candy.jpg, 186.jpg, 698, 294, True
+GROUP, 2021-08-25, 16:38, L, Two Choice Discrimination, 1, Videogame.jpg, 272.jpg, 685, 239, True

@@ -1,0 +1,90 @@
+~@~@~@~@~@~@~@~@~ START OF ERRORLOG FOR 2021-09-01 ~@~@~@~@~@~@~@~@~1-09-01     Time: 09:35
+====================================================
+Error starting program for GROUP
+
+Traceback (most recent call last):
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 245, in main
+    experiment = eval('modules.{}.{}(screen=self.screen, monkey_name=active_monkey, g_params=self.g_params, m_params=self.m_params, arm_used=arm_used, clipart=clipart)'.
+  File "<string>", line 1, in <module>
+  File "C:\Users\wwhitham\Downloads\_programs\MonkeyTrain-main\MonkeyTrain-main\_modules\MTSseq.py", line 26, in __init__
+    self.filepath_to_data = os.path.join('_data', '{}-{}-{}-{}.txt'.format(system_name, monkey_name, TODAY, self.task_name))
+NameError: name 'system_name' is not defined
+User quit the program
+
+Traceback (most recent call last):
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 345, in <module>
+    frontend.main()
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 264, in main
+    check_quit(event=event)
+  File "C:\Users\wwhitham\Downloads\_programs\MonkeyTrain-main\MonkeyTrain-main\_modules\pgtools.py", line 132, in check_quit
+    raise SystemExit
+SystemExit
+
+User quit the program
+
+Traceback (most recent call last):
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 349, in <module>
+    frontend.main()
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 268, in main
+    check_quit(event=event)
+  File "C:\Users\wwhitham\Downloads\_programs\MonkeyTrain-main\MonkeyTrain-main\_modules\pgtools.py", line 141, in check_quit
+    raise SystemExit
+SystemExit
+
+pellet
+pellet
+User quit the program
+
+Traceback (most recent call last):
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 349, in <module>
+    frontend.main()
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 268, in main
+    check_quit(event=event)
+  File "C:\Users\wwhitham\Downloads\_programs\MonkeyTrain-main\MonkeyTrain-main\_modules\pgtools.py", line 141, in check_quit
+    raise SystemExit
+SystemExit
+
+User quit the program
+
+Traceback (most recent call last):
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 349, in <module>
+    frontend.main()
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 268, in main
+    check_quit(event=event)
+  File "C:\Users\wwhitham\Downloads\_programs\MonkeyTrain-main\MonkeyTrain-main\_modules\pgtools.py", line 141, in check_quit
+    raise SystemExit
+SystemExit
+
+distance: 1254.7370242405377
+distance: 994.4993715432906
+pellet
+distance: 1243.8552970502637
+pellet
+distance: 1445.4428387176022
+distance: 1085.659707274798
+pellet
+User quit the program
+
+Traceback (most recent call last):
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 349, in <module>
+    frontend.main()
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 305, in main
+    check_quit(event=event)
+  File "C:\Users\wwhitham\Downloads\_programs\MonkeyTrain-main\MonkeyTrain-main\_modules\pgtools.py", line 141, in check_quit
+    raise SystemExit
+SystemExit
+
+pellet
+pellet
+pellet
+User quit the program
+
+Traceback (most recent call last):
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 349, in <module>
+    frontend.main()
+  File "C:/Users/wwhitham/Downloads/_programs/MonkeyTrain-main/MonkeyTrain-main/MonkeyTrain_frontend.py", line 268, in main
+    check_quit(event=event)
+  File "C:\Users\wwhitham\Downloads\_programs\MonkeyTrain-main\MonkeyTrain-main\_modules\pgtools.py", line 141, in check_quit
+    raise SystemExit
+SystemExit
+
