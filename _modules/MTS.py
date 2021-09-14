@@ -24,7 +24,7 @@ class MTS(object):
         self.arm_used = arm_used
 
         self.filepath_to_data = os.path.join('_data', '{}-{}-{}-{}.txt'.format(system_name, monkey_name, TODAY, self.task_name))
-        self.filepath_to_progress = os.path.join('_monkey-progress', self.monkey_name, 'progress_to_criterion.txt')
+        self.filepath_to_progress = os.path.join('_progress', self.monkey_name, 'progress_to_criterion.txt')
 
         self.trial = 0
         self.ITI = int(self.m_params[self.monkey_name]['ITI'])
@@ -114,7 +114,7 @@ class MTS(object):
         Only progress once per task
         """
         if not self.progressed:
-            filepath_to_task = os.path.join('_monkey-progress', self.monkey_name, 'task-ix.txt')
+            filepath_to_task = os.path.join('_progress', self.monkey_name, 'task-ix.txt')
             with open(self.filepath_to_progress, 'r') as f:
                 progress = f.readlines()
                 progress = [int(x) for x in progress]

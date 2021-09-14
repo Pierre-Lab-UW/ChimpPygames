@@ -23,7 +23,7 @@ class TwoChoice(object):
         self.arm_used = arm_used
 
         self.filepath_to_data = os.path.join('_data', '{}-{}-{}-{}.txt'.format(system_name, monkey_name, TODAY, self.task_name))
-        self.filepath_to_progress = os.path.join('_monkey-progress', self.monkey_name, 'progress_to_criterion.txt')
+        self.filepath_to_progress = os.path.join('_progress', self.monkey_name, 'progress_to_criterion.txt')
 
         self.trial = 0
         self.ITI = int(self.m_params[self.monkey_name]['ITI'])
@@ -54,12 +54,12 @@ class TwoChoice(object):
                       'touch_y', 'pos_x', 'pos_y', 'neg_x', 'neg_y', 'correct'])
 
         # get which set and stimuli we're on
-        with open(os.path.join('_monkey-progress', self.monkey_name, 'set-ix.txt'), 'r') as f:
+        with open(os.path.join('_progress', self.monkey_name, 'set-ix.txt'), 'r') as f:
             self.set = int(f.read())
 
         # if lots of time has elapsed since last 2Choice trial, reset everything
         # #
-        with open(os.path.join('_monkey-progress', self.monkey_name, 'set-timestamp.txt'), 'r') as f:
+        with open(os.path.join('_progress', self.monkey_name, 'set-timestamp.txt'), 'r') as f:
             try:
                 timestamp = float(f.read())
             except ValueError:
@@ -72,9 +72,9 @@ class TwoChoice(object):
             while self.posImage == self.negImage:
                 self.posImage = random.choice(list(self.clipart.keys()))
                 self.negImage = random.choice(list(self.clipart.keys()))
-            with open(os.path.join('_monkey-progress', self.monkey_name, 'set-pos.txt'), 'w') as f:
+            with open(os.path.join('_progress', self.monkey_name, 'set-pos.txt'), 'w') as f:
                 f.write(str(self.posImage))
-            with open(os.path.join('_monkey-progress', self.monkey_name, 'set-neg.txt'), 'w') as f:
+            with open(os.path.join('_progress', self.monkey_name, 'set-neg.txt'), 'w') as f:
                 f.write(str(self.negImage))
             # clear accumulated progress
             with open(self.filepath_to_progress, 'w') as f:
@@ -84,13 +84,13 @@ class TwoChoice(object):
         # else load it from disk
         # #
         else:
-            with open(os.path.join('_monkey-progress', self.monkey_name, 'set-pos.txt'), 'r') as f:
+            with open(os.path.join('_progress', self.monkey_name, 'set-pos.txt'), 'r') as f:
                 self.posImage = f.read()
-            with open(os.path.join('_monkey-progress', self.monkey_name, 'set-neg.txt'), 'r') as f:
+            with open(os.path.join('_progress', self.monkey_name, 'set-neg.txt'), 'r') as f:
                 self.negImage = f.read()
 
             # get accumulated progress
-            with open(os.path.join('_monkey-progress', self.monkey_name, 'progress_to_criterion.txt'), 'r') as f:
+            with open(os.path.join('_progress', self.monkey_name, 'progress_to_criterion.txt'), 'r') as f:
                 self.set_progress = f.readlines()
             _ = []
             for i in self.set_progress:
@@ -104,7 +104,7 @@ class TwoChoice(object):
         if len(self.set_progress) >= trials_to_check_criterion and \
                 sum(self.set_progress[-trials_to_check_criterion:]) >= trials_to_achieve_criterion:
             # write set advancement
-            with open(os.path.join('_monkey-progress', self.monkey_name, 'set-ix.txt'), 'w') as f:
+            with open(os.path.join('_progress', self.monkey_name, 'set-ix.txt'), 'w') as f:
                 f.write(str(self.set + 1))
             # clear accumulated progress
             with open(self.filepath_to_progress, 'w') as f:
@@ -116,9 +116,9 @@ class TwoChoice(object):
             while self.posImage == self.negImage:
                 self.posImage = random.choice(list(self.clipart.keys()))
                 self.negImage = random.choice(list(self.clipart.keys()))
-            with open(os.path.join('_monkey-progress', self.monkey_name, 'set-pos.txt'), 'w') as f:
+            with open(os.path.join('_progress', self.monkey_name, 'set-pos.txt'), 'w') as f:
                 f.write(str(self.posImage))
-            with open(os.path.join('_monkey-progress', self.monkey_name, 'set-neg.txt'), 'w') as f:
+            with open(os.path.join('_progress', self.monkey_name, 'set-neg.txt'), 'w') as f:
                 f.write(str(self.negImage))
 
         self.trial += 1                                                         # iterate trial counter
@@ -153,13 +153,13 @@ class TwoChoice(object):
 
     def on_touch(self, touch_x=None, touch_y=None):
         if self.posStim.rect.contains((touch_x, touch_y, 1, 1)):
-            write_ln(self.filepath_to_data, [self.monkey_name, time.strftime('%Y-%m-%d'), time.strftime('%H:%M'), self.arm_used, self.task_name, self.set, self.posImage, self.negImage, touch_x, touch_y, 1])
+            write_ln(self.filepath_to_data, [self.monkey_name, time.strftime('%Y-%m-%d'), time.strftime('%H:%M'), self.arm_used, self.task_name, self.trial, self.set, self.posImage, self.negImage, touch_x, touch_y, self.posX, self.posY, self.negX, self.negY, 1])
             self.set_progress.append(1)
             self.check_for_progression()
             return 'ITI'
 
         elif self.negStim.rect.contains((touch_x, touch_y, 1, 1)):
-            write_ln(self.filepath_to_data, [self.monkey_name, time.strftime('%Y-%m-%d'), time.strftime('%H:%M'), self.arm_used, self.task_name, self.set, self.posImage, self.negImage, touch_x, touch_y, 0])
+            write_ln(self.filepath_to_data, [self.monkey_name, time.strftime('%Y-%m-%d'), time.strftime('%H:%M'), self.arm_used, self.task_name, self.trial, self.set, self.posImage, self.negImage, touch_x, touch_y, self.posX, self.posY, self.negX, self.negY, 0])
             self.set_progress.append(0)
             self.check_for_progression()
             return 'timeout'
@@ -170,7 +170,7 @@ class TwoChoice(object):
         Only progress once per task
         """
         if (not self.progressed) and (self.set > int(self.m_params[self.monkey_name]['2choiceproblems'])):
-            filepath_to_task = os.path.join('_monkey-progress', self.monkey_name, 'task-ix.txt')
+            filepath_to_task = os.path.join('_progress', self.monkey_name, 'task-ix.txt')
             self.progressed = True
             with open(filepath_to_task, 'r') as f:
                 current_task = int(f.read())
@@ -180,7 +180,7 @@ class TwoChoice(object):
                 f.truncate(0)
 
         # create timestamp for last set that was completed
-        with open(os.path.join('_monkey-progress', self.monkey_name, 'set-timestamp.txt'), 'w') as f:
+        with open(os.path.join('_progress', self.monkey_name, 'set-timestamp.txt'), 'w') as f:
             f.write(str(time.time()))
 
 

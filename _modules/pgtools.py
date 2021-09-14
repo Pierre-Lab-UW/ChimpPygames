@@ -142,7 +142,7 @@ def check_quit(event=None):
         raise SystemExit
 
 
-def pellet():
+def pellet(time_to_close_relay=.25):
     """
     Dispense pellets.
 
@@ -153,7 +153,7 @@ def pellet():
         GPIO.setup(17, GPIO.OUT)
         GPIO.output(17, GPIO.LOW)
 
-        time.sleep(.25)
+        time.sleep(time_to_close_relay)
 
         GPIO.output(17, GPIO.HIGH)
         GPIO.cleanup()

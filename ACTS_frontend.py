@@ -1,10 +1,10 @@
 
 """
-MonkeyTrain
+ACTS
 ==
 +  frontend for all rhesus programs
-+  loads monkey data, task parameters from global_params.txt and monkey_params.csv
-+  loads monkey progress from, and writes monkey progress to, /_monkey-progress
++  loads monkey data, task parameters from global_params.txt and primate_params.csv
++  loads monkey progress from, and writes monkey progress to, /_progress
 +  imports program data from /_modules
 +  writes data to /_data
 +  logs errors in /errorlogs
@@ -17,15 +17,11 @@ To add in a new program
         ::  init new class with g_params, m_params, screen, clipart
         ::  class should have at least two functions: on_loop and on_touch
         ::  new code can import * from _modules.pgtools to have access to general stuff - sounds, data writing, etc
-  2 ::  have new code access params from g_params and m_params. add new columns to monkey_params.csv accordingly
+  2 ::  have new code access params from g_params and m_params. add new columns to primate_params.csv accordingly
         ::  m_params varnames taken from first row, so need to follow python naming rules
 """
 from _modules.pgtools import *
 import _modules as modules
-try:
-    import serial     # for RFID reading
-except:
-    pass
 
 
 class FrontEnd(object):
@@ -63,7 +59,7 @@ class FrontEnd(object):
         # READ IN MONKEY PARAMS
         # #
         self.m_params = {}
-        with open('monkey_params.csv', 'r') as f:
+        with open('primate_params.csv', 'r') as f:
             raw = f.readlines()
             for i, line in enumerate(raw):
                 if i == 0:
@@ -172,8 +168,16 @@ class FrontEnd(object):
         log('Loaded global params ::')
         for k, v in self.g_params.items():
             log('{} :: {}'.format(k, v))
-        log('Loaded monkey params')
+        log('Loaded primate params')
         log(self.m_params)
+
+        # MAKE ANY AMERICAN MONKEY CHANGES
+        # #
+        if self.g_params['STIMULI_COLORS'] != 'normal':
+            CORRECT_COLOR = BLUE
+            INCORRECT_COLOR = YELLOW
+
+
 
         # PROGRAM TIMING
         # #
@@ -279,7 +283,7 @@ class FrontEnd(object):
                 try:
                     self.screen.bg.fill(BLACK)
                     self.screen.fg.blit(self.screen.bg, (0, 0))
-                    with open(os.path.join('_monkey-progress', active_monkey, 'task-ix.txt'), 'r') as f:
+                    with open(os.path.join('_progress', active_monkey, 'task-ix.txt'), 'r') as f:
                         line = f.readline()
                         task_ix = int(line.replace('\n', '').replace('\r', ''))
                     task_order = self.m_params[active_monkey]['task-order'].split('-')
@@ -317,7 +321,10 @@ class FrontEnd(object):
                         if status in ['ITI']:
                             sounds['correct'].play()
                             for i in range(self.g_params['REWARD_AMOUNT']):
-                                pellet()
+                                if self.g_params['REWARD_TYPE'] != 'pellet':
+                                    pellet(time_to_close_relay=1.25)
+                                else:
+                                    pellet()
                         if status in ['timeout']:
                             sounds['incorrect'].play()
                         pg.event.clear()

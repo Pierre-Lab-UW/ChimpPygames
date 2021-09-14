@@ -1,0 +1,1 @@
+monkey_name, date, time, arm, task_name, trial, sample_image, touch_x, touch_y, correct

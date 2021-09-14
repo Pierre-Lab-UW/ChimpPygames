@@ -1,36 +1,36 @@
 """
-MTSseq
+dMTS
 ==
 +  what it looks like :: clipart
 +  how to win :: one clipart is the sample, touching it reveals a sample and other clipart.
      correct response is to touch sample again
 ==
-3 MTS trials, then one DMTS trial with 1 second delay. Progress to criterion based on success of DMTS trial
+3 MTS trials, then one DMTS trial with 3 second delay. Progress to criterion based on success of DMTS trial
 """
 
 
 from _modules.pgtools import *
 
 
-class MTSseq1(object):
+class dMTS3(object):
 
     def __init__(self, screen=None, monkey_name=None, g_params=None, m_params=None, arm_used=None, clipart=None):
 
         self.screen = screen
         self.g_params = g_params
         self.m_params = m_params
-        self.task_name = 'MTSseq1'
+        self.task_name = 'dMTS3'
         self.monkey_name = monkey_name
         self.arm_used = arm_used
 
         self.filepath_to_data = os.path.join('_data', '{}-{}-{}-{}.txt'.format(system_name, monkey_name, TODAY, self.task_name))
-        self.filepath_to_progress = os.path.join('_monkey-progress', self.monkey_name, 'progress_to_criterion.txt')
+        self.filepath_to_progress = os.path.join('_progress', self.monkey_name, 'progress_to_criterion.txt')
 
         self.trial = 0
         self.ITI = int(self.m_params[self.monkey_name]['ITI'])
         self.timeout = int(self.m_params[self.monkey_name]['Timeout'])
         self.clipart = clipart
-        self.delay = 1000
+        self.delay = 3000
         self.trial_style = (['no_delay'] * 3) + ['delay']
         self.trial_style_i = -1
 
@@ -70,7 +70,7 @@ class MTSseq1(object):
                                              'touch_x', 'touch_y', 'correct'])
 
         self.trial += 1                                                         # iterate trial counter
-        self.stim_size = int(self.m_params[self.monkey_name]['MTSseqsize'])     # get stim_size
+        self.stim_size = int(self.m_params[self.monkey_name]['dMTSsize'])     # get stim_size
         self.clipart_this_trial = random.choice(list(self.clipart.keys()))      # get name of clipart for this trial
         (self.sample_x, self.sample_y) = (int((self.g_params['SCREEN_W'] - self.stim_size) / 2),
                                           int((self.g_params['SCREEN_H'] - self.stim_size) / 5))
@@ -147,12 +147,12 @@ class MTSseq1(object):
         Only progress once per task
         """
         if not self.progressed:
-            filepath_to_task = os.path.join('_monkey-progress', self.monkey_name, 'task-ix.txt')
+            filepath_to_task = os.path.join('_progress', self.monkey_name, 'task-ix.txt')
             with open(self.filepath_to_progress, 'r') as f:
                 progress = f.readlines()
                 progress = [int(x) for x in progress]
-                trials_to_check_criterion = int(self.m_params[self.monkey_name]['MTSseqtrials'])
-                trials_to_achieve_criterion = int(self.m_params[self.monkey_name]['MTSseqcriterion'])
+                trials_to_check_criterion = int(self.m_params[self.monkey_name]['dMTStrials'])
+                trials_to_achieve_criterion = int(self.m_params[self.monkey_name]['dMTScriterion'])
                 if (len(progress) >= trials_to_check_criterion) and \
                         (sum(progress[-trials_to_check_criterion:]) >= trials_to_achieve_criterion):
                     self.progressed = True

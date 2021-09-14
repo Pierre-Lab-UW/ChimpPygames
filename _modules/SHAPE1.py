@@ -26,8 +26,8 @@ class SHAPE1(object):
         self.arm_used = arm_used
 
         self.filepath_to_data = os.path.join('_data', '{}-{}-{}-{}.txt'.format(system_name, monkey_name, TODAY, self.task_name))
-        self.filepath_to_size = os.path.join('_monkey-progress', monkey_name, 'TouchTrain-size.txt')
-        self.filepath_to_progress = os.path.join('_monkey-progress', self.monkey_name, 'progress_to_criterion.txt')
+        self.filepath_to_size = os.path.join('_progress', monkey_name, 'TouchTrain-size.txt')
+        self.filepath_to_progress = os.path.join('_progress', self.monkey_name, 'progress_to_criterion.txt')
 
         self.trial = 0
         self.ITI = int(self.m_params[self.monkey_name]['ITI'])
@@ -48,7 +48,7 @@ class SHAPE1(object):
         if not os.path.isfile(self.filepath_to_data):
             write_ln(self.filepath_to_data,
                      ['monkey_name', 'date', 'time', 'arm', 'task_name',
-                      'trial', 'stim_size', 'touch_x', 'touch_y', 'correct'])
+                      'trial', 'stim_size', 'touch_x', 'touch_y', 'stim_x', 'stim_y', 'correct'])
 
         self.trial += 1   # iterate trial counter
         # get stim_size
@@ -81,7 +81,7 @@ class SHAPE1(object):
         if distance_from_stimulus < correct_radius:
             write_ln(self.filepath_to_data, [self.monkey_name, time.strftime('%Y-%m-%d'), time.strftime('%H:%M'),
                                              self.arm_used, self.task_name, self.trial, self.stim_size,
-                                             touch_x, touch_y, 1])
+                                             touch_x, touch_y, self.stim_x, self.stim_y, 1])
             with open(self.filepath_to_progress, 'a') as f:
                 f.writelines(str(1) + '\n')
             with open(self.filepath_to_size, 'w') as f:
@@ -99,7 +99,7 @@ class SHAPE1(object):
         else:
             write_ln(self.filepath_to_data, [self.monkey_name, time.strftime('%Y-%m-%d'), time.strftime('%H:%M'),
                                              self.arm_used, self.task_name, self.trial, self.stim_size,
-                                             touch_x, touch_y, 0])
+                                             touch_x, touch_y, self.stim_x, self.stim_y, 0])
             with open(self.filepath_to_progress, 'a') as f:
                 f.writelines(str(0) + '\n')
             with open(self.filepath_to_size, 'w') as f:
@@ -116,7 +116,7 @@ class SHAPE1(object):
         Only progress once per task
         """
         if not self.progressed:
-            filepath_to_task = os.path.join('_monkey-progress', self.monkey_name, 'task-ix.txt')
+            filepath_to_task = os.path.join('_progress', self.monkey_name, 'task-ix.txt')
             with open(self.filepath_to_progress, 'r') as f:
                 progress = f.readlines()
                 progress = [int(x) for x in progress]
