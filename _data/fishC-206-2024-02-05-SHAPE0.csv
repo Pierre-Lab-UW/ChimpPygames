@@ -1,0 +1,3 @@
+monkey_name,date,time,arm,task_name,trial,stim_size,touch_x,touch_y,stim_x,stim_y,correct
+fishC,2024-02-05,08:59:16,L,SHAPE0,1,768,547,485,128,0,1
+fishC,2024-02-05,09:02:40,L,SHAPE0,1,768,592,528,128,0,1

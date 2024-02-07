@@ -22,7 +22,7 @@ class SHAPE2(object):
         self.monkey_name = monkey_name
         self.arm_used = arm_used
 
-        self.filepath_to_data = os.path.join('_data', '{}-{}-{}-{}.txt'.format(system_name, monkey_name, TODAY, self.task_name))
+        self.filepath_to_data = os.path.join('_data', '{}-{}-{}-{}.csv'.format(self.monkey_name, system_name, time.strftime('%Y-%m-%d'), self.task_name))
         self.filepath_to_size = os.path.join('_progress', monkey_name, 'TouchTrain-size.txt')
         self.filepath_to_progress = os.path.join('_progress', self.monkey_name, 'progress_to_criterion.txt')
 
@@ -43,11 +43,12 @@ class SHAPE2(object):
         """
         Initiates a new trial, draws stimulus
         """
+        self.filepath_to_data = os.path.join('_data', '{}-{}-{}-{}.csv'.format(self.monkey_name, system_name, time.strftime('%Y-%m-%d'), self.task_name))
         # if no datafile exists yet, create one with the column headings
         if not os.path.isfile(self.filepath_to_data):
             write_ln(self.filepath_to_data,
                      ['monkey_name', 'date', 'time', 'arm', 'task_name',
-                      'trial', 'stim_size', 'touch_x', 'touch_y', 'correct'])
+                      'trial', 'stim_size', 'touch_x', 'touch_y', 'stim_x', 'stim_y', 'correct'])
 
         self.trial += 1                                                         # iterate trial counter
         self.stim_size = int(self.m_params[self.monkey_name]['SHAPE2size'])     # get stim_size
@@ -69,7 +70,7 @@ class SHAPE2(object):
     def on_loop(self):
         self.stimulus = pg.draw.rect(self.screen.fg, Color('goldenrod'),
                                      (self.stim_x, self.stim_y, self.stim_size, self.stim_size), 15)
-        self.screen.fg.blit(self.clipart_this_trial, (self.stim_x, self.stim_y))
+        self.screen.fg.blit(pg.transform.scale(self.clipart_this_trial, (self.stim_size, self.stim_size)), (self.stim_x, self.stim_y))
 
     def on_touch(self, touch_x=None, touch_y=None):
 
@@ -85,9 +86,9 @@ class SHAPE2(object):
         # if correct touch
         # #
         if distance_from_stimulus < correct_radius:
-            write_ln(self.filepath_to_data, [self.monkey_name, time.strftime('%Y-%m-%d'), time.strftime('%H:%M'),
+            write_ln(self.filepath_to_data, [self.monkey_name, time.strftime('%Y-%m-%d'), time.strftime('%H:%M:%S'),
                                              self.arm_used, self.task_name, self.trial, self.stim_size,
-                                             touch_x, touch_y, 1])
+                                             touch_x, touch_y, self.stim_x, self.stim_y, 1])
             with open(self.filepath_to_progress, 'a') as f:
                 f.writelines(str(1) + '\n')
             with open(self.filepath_to_size, 'w') as f:
@@ -101,9 +102,9 @@ class SHAPE2(object):
         # if incorrect touch
         # #
         else:
-            write_ln(self.filepath_to_data, [self.monkey_name, time.strftime('%Y-%m-%d'), time.strftime('%H:%M'),
+            write_ln(self.filepath_to_data, [self.monkey_name, time.strftime('%Y-%m-%d'), time.strftime('%H:%M:%S'),
                                              self.arm_used, self.task_name, self.trial, self.stim_size,
-                                             touch_x, touch_y, 0])
+                                             touch_x, touch_y, self.stim_x, self.stim_y, 0])
             with open(self.filepath_to_progress, 'a') as f:
                 f.writelines(str(0) + '\n')
             with open(self.filepath_to_size, 'w') as f:
@@ -119,8 +120,14 @@ class SHAPE2(object):
         if not self.progressed:
             filepath_to_task = os.path.join('_progress', self.monkey_name, 'task-ix.txt')
             with open(self.filepath_to_progress, 'r') as f:
-                progress = f.readlines()
-                progress = [int(x) for x in progress]
+                raw_progress = f.readlines()
+                # progress = [int(x) for x in progress]
+                progress = []
+                for line in raw_progress:
+                    try:
+                        progress.append(int(line))
+                    except:
+                        pass   # ignore anything in raw_progress that can't be parsed as int
                 trials_to_check_criterion = int(self.m_params[self.monkey_name]['SHAPE2trials'])
                 trials_to_achieve_criterion = int(self.m_params[self.monkey_name]['SHAPE2criterion'])
                 if (len(progress) >= trials_to_check_criterion) and \

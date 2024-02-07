@@ -1,4 +1,0 @@
-monkey_name, date, time, arm, task_name, trial, stim_size, touch_x, touch_y, correct
-FISH2, 2021-09-10, 11:48, L, SHAPE1, 1, 200, 525, 368, 1
-FISH2, 2021-09-10, 11:52, L, SHAPE1, 1, 200, 492, 343, 1
-FISH2, 2021-09-10, 11:58, L, SHAPE1, 1, 200, 512, 384, 1

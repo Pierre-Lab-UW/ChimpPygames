@@ -1,5 +1,0 @@
-monkey_name, date, time, arm, task_name, trial, stim_size, touch_x, touch_y, correct
-GROUP, 2021-08-24, 10:53, L, SHAPE2, 1, 200, 598, 618, True
-GROUP, 2021-08-24, 10:53, L, SHAPE2, 2, 200, 704, 499, True
-GROUP, 2021-08-24, 10:53, L, SHAPE2, 3, 200, 704, 501, True
-GROUP, 2021-08-24, 10:53, L, SHAPE2, 4, 200, 753, 371, True

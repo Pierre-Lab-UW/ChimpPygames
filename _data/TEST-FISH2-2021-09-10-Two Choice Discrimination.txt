@@ -1,3 +1,0 @@
-monkey_name, date, time, arm, task_name, trial, set, posImage, negImage, touch_x, touch_y, pos_x, pos_y, neg_x, neg_y, correct
-FISH2, 2021-09-10, 12:00, L, Two Choice Discrimination, 1, Hamsterthing.jpg, 178.jpg, 245, 648, 1
-FISH2, 2021-09-10, 12:00, L, Two Choice Discrimination, 1, Hamsterthing.jpg, 178.jpg, 654, 388, 1

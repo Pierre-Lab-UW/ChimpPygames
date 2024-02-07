@@ -3,24 +3,28 @@ screen width
 screen height
 768
 cursor visible :: True or False
-True
+False
 restrict screen :: True or False
 True
 autoshaping :: True or False
 True
-autoshaping time (in minutes)
+time until monkey can be rewarded for tag read, if able (in minutes)
 10
 color stimuli (normal or RGblind)
-normal
-host connected :: True or False :: I think this no longer does anything?
+RGblind
+host connected :: True or False
 True
 RFID reader connected :: True or False
 False
 DRO length (in seconds)
-1
+3
 reward type (pellet or liquid)
-pellet
+liquid
 reward amount (# of dispenses)
 1
 debug window on :: True or False
+True
+time to reset :: in msec
+30000
+do not disturb 7pm-7am
 True

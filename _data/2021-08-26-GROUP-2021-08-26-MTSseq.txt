@@ -1,7 +1,0 @@
-monkey_name, date, time, arm, task_name, trial, sample_onscreen, sample_image, num_sample+matches, touch_x, touch_y, correct
-GROUP, 2021-08-26, 11:39, L, MTSseq, 1, SamSheepdog.jpg, 1, 633, 522, True
-GROUP, 2021-08-26, 11:42, L, MTSseq, 1, Bottle.jpg, 1, 596, 503, True
-GROUP, 2021-08-26, 11:42, L, MTSseq, 1, 73.jpg, 1, 628, 543, True
-GROUP, 2021-08-26, 11:43, L, MTSseq, 2, 102.jpg, 1, 382, 526, True
-GROUP, 2021-08-26, 11:43, L, MTSseq, 3, 278.jpg, 1, 420, 550, False
-GROUP, 2021-08-26, 11:45, L, MTSseq, 1, 158.jpg, right, 1, 583, 511, True

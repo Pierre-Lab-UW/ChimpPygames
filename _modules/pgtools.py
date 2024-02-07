@@ -12,7 +12,7 @@ WW2021
 # IMPORTS
 # #
 import sys, os, random, time, glob, logging, math
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import pygame as pg
 from pygame.locals import *
 
@@ -22,17 +22,17 @@ from pygame.locals import *
 BLACK = (1, 1, 1)
 GREEN = (0, 128, 0)
 RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-YELLOW = (0, 128, 128)
+BLUE = (0, 255, 255)
+YELLOW = (255, 255, 0)
 CORRECT_COLOR = GREEN
 INCORRECT_COLOR = RED
 BUFFER_COLOR = BLACK
 
 HOSTROOT = ''
 TODAY = time.strftime('%Y-%m-%d')
-TIME = time.strftime('%H:%M')
-FPS = 10
-CLIPART_TO_LOAD = 10
+TIME = time.strftime('%H:%M:%S')
+FPS = 30
+CLIPART_TO_LOAD = 9999
 
 
 # INIT PYGAME
@@ -41,6 +41,8 @@ pg.init()
 pg.font.init()
 sm_font = pg.font.SysFont(None, 32)
 big_font = pg.font.SysFont(None, 64)
+huge_font = pg.font.SysFont(None, 240)  #MM attempts to make huge text
+giant_font = pg.font.SysFont(None, 360)  #MM attempts to make gigantic text
 
 
 # SYSTEM NAME
@@ -57,7 +59,7 @@ except:
 sounds = {}
 for sound in glob.glob(os.path.join('_sounds', '*.wav')):
     sounds[os.path.basename(sound).replace('.wav', '')] = pg.mixer.Sound(sound)
-    sounds[os.path.basename(sound).replace('.wav', '')].set_volume(.25)
+    sounds[os.path.basename(sound).replace('.wav', '')].set_volume(1)
 
 
 # SCREEN
@@ -126,7 +128,7 @@ def write_ln(filename=None, data="", csv=True):
     for name in files_to_write:
         with open(name, "a+") as data_file:
             if csv:
-                data_file.write(", ".join(map(str, data)) + "\n")
+                data_file.write(",".join(map(str, data)) + "\n")
             else:
                 data_file.write("\t".join(map(str, data)) + "\n")
 
@@ -142,7 +144,7 @@ def check_quit(event=None):
         raise SystemExit
 
 
-def pellet(time_to_close_relay=.25):
+def pellet(time_to_close_relay=1.25, channel=17):
     """
     Dispense pellets.
 
@@ -150,14 +152,15 @@ def pellet(time_to_close_relay=.25):
     """
     try:
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(17, GPIO.OUT)
-        GPIO.output(17, GPIO.LOW)
+        GPIO.setup(channel, GPIO.OUT)
+        GPIO.output(channel, GPIO.LOW)
 
         time.sleep(time_to_close_relay)
 
-        GPIO.output(17, GPIO.HIGH)
+        GPIO.output(channel, GPIO.HIGH)
         GPIO.cleanup()
     except:
+        logging.exception('')
         log('pellet')
 
 if __name__ == "__main__":

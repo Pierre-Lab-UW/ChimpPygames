@@ -1,5 +1,0 @@
-monkey_name, date, time, arm, task_name, trial, trial_style, sample_image, sample_pos, touch_x, touch_y, correct
-GROUP, 2021-09-10, 13:12, L, MTSseq5, 1, no_delay, 104.jpg, left, 1, 370, 502, 1
-GROUP, 2021-09-10, 13:12, L, MTSseq5, 2, no_delay, 109.jpg, left, 1, 394, 500, 1
-GROUP, 2021-09-10, 13:12, L, MTSseq5, 3, no_delay, 109.jpg, right, 1, 584, 514, 1
-GROUP, 2021-09-10, 13:12, L, MTSseq5, 4, delay, 10.jpg, left, 1, 342, 544, 1

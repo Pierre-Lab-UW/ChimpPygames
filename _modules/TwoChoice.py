@@ -22,8 +22,9 @@ class TwoChoice(object):
         self.monkey_name = monkey_name
         self.arm_used = arm_used
 
-        self.filepath_to_data = os.path.join('_data', '{}-{}-{}-{}.txt'.format(system_name, monkey_name, TODAY, self.task_name))
+        self.filepath_to_data = os.path.join('_data', '{}-{}-{}-{}.csv'.format(self.monkey_name, system_name, time.strftime('%Y-%m-%d'), self.task_name))
         self.filepath_to_progress = os.path.join('_progress', self.monkey_name, 'progress_to_criterion.txt')
+        self.filepath_to_trial = os.path.join('_progress', self.monkey_name, 'progress_to_trial.txt')
 
         self.trial = 0
         self.ITI = int(self.m_params[self.monkey_name]['ITI'])
@@ -42,16 +43,34 @@ class TwoChoice(object):
         self.set_progress = []
         self.progressed = False
 
+    def trialio(self, operation=None):
+        if not os.path.isfile(self.filepath_to_trial):
+            with open(self.filepath_to_trial, 'w+') as f:
+                f.write('0')   # init trial file if there is none
+        elif operation == 'reset':
+            with open(self.filepath_to_trial, 'w+') as f:
+                self.trial = 0
+                f.write('0')
+        elif operation == 'read':
+            with open(self.filepath_to_trial, 'r+') as f:
+                self.trial = int(f.read())
+        elif operation == 'write':
+            with open(self.filepath_to_trial, 'w+') as f:
+                f.write(str(self.trial))
+
     def new_trial(self):
         """
         Initiates a new trial, draws stimulus
         """
+        self.filepath_to_data = os.path.join('_data', '{}-{}-{}-{}.csv'.format(self.monkey_name, system_name, time.strftime('%Y-%m-%d'), self.task_name))
         # if no datafile exists yet, create one with the column headings
         if not os.path.isfile(self.filepath_to_data):
             write_ln(self.filepath_to_data,
                      ['monkey_name', 'date', 'time', 'arm', 'task_name',
                       'trial', 'set', 'posImage', 'negImage', 'touch_x',
                       'touch_y', 'pos_x', 'pos_y', 'neg_x', 'neg_y', 'correct'])
+
+        self.trialio('read')   # read in current trial
 
         # get which set and stimuli we're on
         with open(os.path.join('_progress', self.monkey_name, 'set-ix.txt'), 'r') as f:
@@ -80,6 +99,7 @@ class TwoChoice(object):
             with open(self.filepath_to_progress, 'w') as f:
                 f.truncate(0)
             self.set_progress = []
+            self.trialio(operation='reset')
 
         # else load it from disk
         # #
@@ -106,10 +126,13 @@ class TwoChoice(object):
             # write set advancement
             with open(os.path.join('_progress', self.monkey_name, 'set-ix.txt'), 'w') as f:
                 f.write(str(self.set + 1))
+                self.set += 1
+            self.trialio(operation='reset')   # reset trial count
             # clear accumulated progress
             with open(self.filepath_to_progress, 'w') as f:
                 f.truncate(0)
                 self.set_progress = []
+
             # get new images for new set
             self.posImage = random.choice(list(self.clipart.keys()))
             self.negImage = random.choice(list(self.clipart.keys()))
@@ -155,12 +178,18 @@ class TwoChoice(object):
         if self.posStim.rect.contains((touch_x, touch_y, 1, 1)):
             write_ln(self.filepath_to_data, [self.monkey_name, time.strftime('%Y-%m-%d'), time.strftime('%H:%M'), self.arm_used, self.task_name, self.trial, self.set, self.posImage, self.negImage, touch_x, touch_y, self.posX, self.posY, self.negX, self.negY, 1])
             self.set_progress.append(1)
+            with open(self.filepath_to_progress, 'a') as f:
+                f.writelines(str(1) + '\n')
+            self.trialio(operation='write')  # write completed trial
             self.check_for_progression()
             return 'ITI'
 
         elif self.negStim.rect.contains((touch_x, touch_y, 1, 1)):
             write_ln(self.filepath_to_data, [self.monkey_name, time.strftime('%Y-%m-%d'), time.strftime('%H:%M'), self.arm_used, self.task_name, self.trial, self.set, self.posImage, self.negImage, touch_x, touch_y, self.posX, self.posY, self.negX, self.negY, 0])
             self.set_progress.append(0)
+            with open(self.filepath_to_progress, 'a') as f:
+                f.writelines(str(0) + '\n')
+            self.trialio(operation='write')   # write completed trial
             self.check_for_progression()
             return 'timeout'
 
@@ -185,32 +214,4 @@ class TwoChoice(object):
 
 
 if __name__ == '__main__':
-    # TODO :: this. it would be great if programs could stand alone. Should progression still work?
-
-    screen = Screen(fullscreen=True, size=(1024, 768), color=BLACK)
-
-    # LOAD CLIPART
-    # #
-    load_start = pg.time.get_ticks()
-    clipart = {}
-    for image in glob.glob(os.path.join('_clipart', '*.jpg')):
-        clipart[os.path.basename(image)] = pg.transform.scale(pg.image.load(image), (200, 200))
-        pg.draw.rect(screen.fg, Color('black'), (300, 300, 400, 75))
-        screen.fg.blit(big_font.render('{} clipart loaded'.format(len(clipart)), False, Color('salmon')), (300, 300))
-        pg.display.update((300, 300, 400, 75))
-    log('{} clipart loaded in {} seconds'.format(len(clipart), (pg.time.get_ticks() - load_start) / 1000))
-
-    # LOAD PROGRAM PARAMETERS
-    # #
-
-
-    # GAMELOOP
-    # #
-    done = False
-    while not done:
-        today = time.strftime('%Y-%m-%d')
-
-        # draw background
-        # #
-        screen.fg.blit(screen.bg, (0, 0))
-
+    raise SystemExit
