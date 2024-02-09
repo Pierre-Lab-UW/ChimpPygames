@@ -1,6 +1,6 @@
 Color_name,H_min,S_min,V_min,H_max,S_max,V_max,combined_colors,is_full_color
 red1,0,70,100,5,255,255,Nan,False
 red2,170,70,100,180,255,255,Nan,False
-blue,101,50,50,114,255,255,Nan,True
-red,Nan,Nan,Nan,Nan,Nan,Nan,"red1, red2",True
+GROUP,101,50,50,114,255,255,Nan,True
+TestChip,Nan,Nan,Nan,Nan,Nan,Nan,"red1, red2",True
 

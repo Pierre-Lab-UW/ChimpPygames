@@ -481,7 +481,7 @@ class FrontEnd(object):
                 new_monkey_takes_over = monkey_name is not None and monkey_name != active_monkey
                 should_progress = experiment.progressed if experiment is not None else False
                 if (monkey_enters_anew or new_monkey_takes_over or should_progress) and monkey_name is not None:
-                    log("Monke")
+                    log(self.m_params)
                     if monkey_enters_anew or new_monkey_takes_over:
                         active_monkey = monkey_name
                     try:
