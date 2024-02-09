@@ -146,11 +146,14 @@ class FrontEnd(object):
         try:
             time_to_autoshape = int(self.a_params[system_name]) * 60 * 1000
         except:
-            time_to_autoshape = 60 * 60 * 1000   # if system_name isn't in a_params
+            #Error: Param not being loaded: Original val was 60*60*1000c
+            time_to_autoshape = 10 * 1000   # if system_name isn't in a_params
         needs_shaping = pg.time.get_ticks() - time_to_autoshape > time_since_autoshape
+        log("Ticks needed: {}, Current Ticks:  {}".format(time_to_autoshape, pg.time.get_ticks() - time_to_autoshape))
         after_8am = int(time.strftime('%H')) >= 8
         before_4pm = int(time.strftime('%H')) < 16
         if needs_shaping and after_8am and before_4pm:
+            log("Autoshaping now...")
             autoshape_datafile = os.path.join(HOSTROOT, '_data', 'autoshaping_' + system_name + '_week' + week + '.csv')
             write_ln(autoshape_datafile, [today, time.strftime('%H:%M:%S')])
             for i, color in enumerate([(0,255,255), (1, 1, 1)] * 2):
@@ -158,7 +161,8 @@ class FrontEnd(object):
                 self.screen.fg.blit(self.screen.bg, (0, 0))
                 pg.display.update()
                 time.sleep(.3)
-            sounds['correct'].play()
+            #Error: Correct sound unable to be loaded
+            #sounds['correct'].play()
             pellet()
             return True
         return False
