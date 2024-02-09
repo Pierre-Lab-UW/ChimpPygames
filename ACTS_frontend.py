@@ -20,9 +20,11 @@ To add in a new program
   2 ::  have new code access params from g_params and m_params. add new columns to primate_params.csv accordingly
         ::  m_params varnames taken from first row, so need to follow python naming rules
 """
+import subprocess
 from _modules.pgtools import *
 import _modules as modules
 
+from color_based_detection import *
 
 class FrontEnd(object):
     """
@@ -149,7 +151,6 @@ class FrontEnd(object):
             #Error: Param not being loaded: Original val was 60*60*1000c
             time_to_autoshape = 10 * 1000   # if system_name isn't in a_params
         needs_shaping = pg.time.get_ticks() - time_to_autoshape > time_since_autoshape
-        log("Ticks needed: {}, Current Ticks:  {}".format(time_to_autoshape, pg.time.get_ticks() - time_to_autoshape))
         after_8am = int(time.strftime('%H')) >= 8
         before_4pm = int(time.strftime('%H')) < 16
         if needs_shaping and after_8am and before_4pm:
@@ -331,7 +332,9 @@ class FrontEnd(object):
         if self.g_params['RFID_READER_CONNECTED']:
             import serial
             self.device = serial.Serial('/dev/serial0', 9600, timeout=0)
-
+        else:
+            run()
+            log("INFO: Running camera on seperate thread.")
         # MAKE ANY AMERICAN MONKEY CHANGES
         # #
         if self.g_params['STIMULI_COLORS'] == 'normal':
@@ -453,7 +456,10 @@ class FrontEnd(object):
                                 break
                     elif tag == 'read_error':
                         status = 'read_error'
-                
+                else:
+                    monkey_name = state_color.max_color
+                    log("Color: "+str(state_color.max_color))
+                    log("Monkey Name:"+str(monkey_name))
                 # get any typed input
                 # #
                 for key in self.m_params.keys():
@@ -475,6 +481,7 @@ class FrontEnd(object):
                 new_monkey_takes_over = monkey_name is not None and monkey_name != active_monkey
                 should_progress = experiment.progressed if experiment is not None else False
                 if (monkey_enters_anew or new_monkey_takes_over or should_progress) and monkey_name is not None:
+                    log("Monke")
                     if monkey_enters_anew or new_monkey_takes_over:
                         active_monkey = monkey_name
                     try:
