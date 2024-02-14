@@ -5,7 +5,7 @@ import pandas as pd
 import time
 
 start_time = time.time()
-
+DEBUG = False
 class ColorObject:
     def __init__(self, lower_bound:list[int], upper_bound: list[int]) -> None:
         self.lower_bound: np.array = np.array(lower_bound, dtype = "uint8")
@@ -102,9 +102,9 @@ def color_search() -> None:
             hsv = frame_hsv[y,x]
             print("The mouse was clicked at x= ", x, "y = ", y)
             print("Hue = ", hsv[0],  "Sat = ", hsv[1], "Val = ", hsv[2])
-
-    #cv2.namedWindow("Main")
-    #cv2.setMouseCallback("Main", mouseClick, param = None)
+    if DEBUG:
+        cv2.namedWindow("Main")
+        cv2.setMouseCallback("Main", mouseClick, param = None)
 
 
     # Open the default camera (you can change the parameter to use a different camera)
@@ -117,17 +117,18 @@ def color_search() -> None:
 
         global frame_hsv
         frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)        
-
+        frame_show = frame
         for index, color_str in enumerate(color_dictionary):
-            #cv2.imshow('Color isolation '+str(color_str), color_dictionary[color_str].filter_image(frame))
-            percentage_val = color_dictionary[color_str].get_color_percentage(frame)
-            #frame = cv2.putText(frame, str(color_str)+':'+str(percentage_val), (50, 100+(50*index)), cv2.FONT_HERSHEY_SIMPLEX,  
-                        # 1, (0,0,0), 2, cv2.LINE_AA)
-
-        #cv2.imshow('Main', frame)
+            if DEBUG:
+                cv2.imshow('Color isolation '+str(color_str), color_dictionary[color_str].filter_image(frame))
+                percentage_val = color_dictionary[color_str].get_color_percentage(frame)
+                frame_show = cv2.putText(frame, str(color_str)+':'+str(percentage_val), (50, 100+(50*index)), cv2.FONT_HERSHEY_SIMPLEX,
+                            1, (0,0,0), 2, cv2.LINE_AA)
+        if DEBUG:
+            cv2.imshow('Main', frame_show)
         mc = calc_max_color(color_dictionary, frame)
         state_color.max_color = mc
-        print("Max color: "+ str(state_color.max_color))
+        #print("Max color: "+ str(state_color.max_color))
         #print(color_test.get_color_percentage(frame))
         # Check for the 'q' key to exit the loop and terminate the program
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -155,5 +156,6 @@ def run():
     t.start()
 
 if __name__ == "__main__":
-    color_search(10)
+    DEBUG = True
+    color_search()
     print("Program terminated.")
