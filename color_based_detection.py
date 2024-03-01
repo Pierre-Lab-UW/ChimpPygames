@@ -7,7 +7,7 @@ import time
 start_time = time.time()
 DEBUG = False
 class ColorObject:
-    def __init__(self, lower_bound:list[int], upper_bound: list[int]) -> None:
+    def __init__(self, lower_bound, upper_bound) -> None:
         self.lower_bound: np.array = np.array(lower_bound, dtype = "uint8")
         self.upper_bound: np.array =  np.array(upper_bound, dtype = "uint8")
 
@@ -41,7 +41,7 @@ class ColorObject:
         return cv2.inRange(frame_hsv, self.lower_bound, self.upper_bound)
     
 class CombinedMask(ColorObject):
-    def __init__(self, lower_bound: list[int], upper_bound: list[int], c1: ColorObject, c2: ColorObject) -> None:
+    def __init__(self, lower_bound, upper_bound, c1: ColorObject, c2: ColorObject) -> None:
         super().__init__(lower_bound, upper_bound)
         self.color1:ColorObject = c1
         self.color2: ColorObject = c2
@@ -49,9 +49,9 @@ class CombinedMask(ColorObject):
     def get_color_mask(self, image: np.array):
         return cv2.bitwise_or(self.color1.get_color_mask(image), self.color2.get_color_mask(image))
 
-def build_color_dictionary() -> dict[str, ColorObject]:
+def build_color_dictionary():
     df: pd.DataFrame = pd.read_csv('color_config.csv')
-    color_dictionary: dict[str, ColorObject] = {}
+    color_dictionary = {}
     color_list = []
     #add all colors in that are not combined colors
     for ind in df.index:
@@ -142,7 +142,7 @@ def color_search() -> None:
 
     
 
-def calc_max_color(colors:dict[str, ColorObject], image:np.array):
+def calc_max_color(colors, image:np.array):
     max_key = None 
     max_value = 0.02
     for str, color in colors.items():
