@@ -1,0 +1,3 @@
+monkey_name,date,time,arm,task_name,trial,set,posImage,negImage,touch_x,touch_y,pos_x,pos_y,neg_x,neg_y,correct
+TestChip,2024-03-11,13:02,None,Two Choice Discrimination,1,1,grey___image1187.jpg,pink___image67.jpg,310,397,597,492,170,222,0
+TestChip,2024-03-11,13:02,None,Two Choice Discrimination,2,1,grey___image1187.jpg,pink___image67.jpg,638,585,587,442,160,165,1

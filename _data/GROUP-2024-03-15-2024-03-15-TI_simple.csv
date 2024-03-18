@@ -1,0 +1,2 @@
+monkey_name,date,time,arm,task_name,trial,set,phase,posImage,negImage,touch_x,touch_y,pos_x,pos_y,neg_x,neg_y,correct
+GROUP,2024-03-15,11:16:51,None,TI_simple,1,1,learning,white___image815.jpg,pink___image1233.jpg,368,623,582,174,159,508,0
