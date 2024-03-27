@@ -64,13 +64,13 @@ class SHAPE2(object):
                                           random.randint(0, (self.g_params['SCREEN_H'] - self.stim_size)))
 
         # to test touch zones
-        # pg.draw.circle(screen.fg, Color('chartreuse'), (int(self.stim_x+self.stim_size/2), int(self.stim_y+self.stim_size/2)), int((self.stim_size / 2) + (.30*self.stim_size)), 10)
-        # pg.draw.circle(screen.fg, Color('chartreuse'), (int(self.stim_x+self.stim_size/2), int(self.stim_y+self.stim_size/2)), int((self.stim_size / 2) + (.45*self.stim_size)), 10)
 
     def on_loop(self):
         self.stimulus = pg.draw.rect(self.screen.fg, Color('goldenrod'),
                                      (self.stim_x, self.stim_y, self.stim_size, self.stim_size), 15)
         self.screen.fg.blit(pg.transform.scale(self.clipart_this_trial, (self.stim_size, self.stim_size)), (self.stim_x, self.stim_y))
+        pg.draw.circle(self.screen.fg, Color('chartreuse'), (int(self.stim_x+self.stim_size/2), int(self.stim_y+self.stim_size/2)), int((self.stim_size / 2) + (.30*self.stim_size)), 10)
+        pg.draw.circle(self.screen.fg, Color('chartreuse'), (int(self.stim_x+self.stim_size/2), int(self.stim_y+self.stim_size/2)), int((self.stim_size / 2) + (.45*self.stim_size)), 10)
 
     def on_touch(self, touch_x=None, touch_y=None):
 
@@ -82,7 +82,9 @@ class SHAPE2(object):
         distance_from_stimulus = math.sqrt(x_diff + y_diff)
         correct_radius = (self.stim_size / 2) + (.30 * self.stim_size)
         nothing_happens_radius = (self.stim_size / 2) + (.45 * self.stim_size)
-
+        print("Distance from stimulus: "+str(distance_from_stimulus))
+        print("Correct radius:"+str(correct_radius))
+        print("Nothing happens radius: "+str(nothing_happens_radius))
         # if correct touch
         # #
         if distance_from_stimulus < correct_radius:
