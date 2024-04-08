@@ -1,7 +1,7 @@
 screen width
-256
+512
 screen height
-192
+384
 cursor visible :: True or False
 False
 restrict screen :: True or False
