@@ -83,10 +83,10 @@ class FrontEnd(object):
         # DRAW DEBUG WINDOW
         # #
         # if self.g_params['DEBUG_WINDOW_ON']:
-        self.debug_rect = (0, self.g_params['SCREEN_H'] - .05 * self.g_params['SCREEN_H'],
-                      self.g_params['SCREEN_W'], .05 * self.g_params['SCREEN_H'])
-        self.debug_bg = Color('black')
-        self.debug_fg = Color('DarkSlateGray')
+        #self.debug_rect = (0, self.g_params['SCREEN_H'] - .05 * self.g_params['SCREEN_H'],
+        #              self.g_params['SCREEN_W'], .05 * self.g_params['SCREEN_H'])
+        #self.debug_bg = Color('black')
+        #self.debug_fg = Color('DarkSlateGray')
 
         # TO SEND COMMANDS MANUALLY
         # #
@@ -408,7 +408,7 @@ class FrontEnd(object):
                 # draw background and debug window
                 # #
                 self.screen.fg.blit(self.screen.bg, (0, 0))
-                pg.draw.rect(self.screen.fg, self.debug_bg, self.debug_rect)
+                #pg.draw.rect(self.screen.fg, self.debug_bg, self.debug_rect)
                 
                 # reset program on inactivity
                 # #
