@@ -5,7 +5,7 @@ screen height
 cursor visible :: True or False
 False
 restrict screen :: True or False
-True
+False
 autoshaping :: True or False
 True
 time until monkey can be rewarded for tag read, if able (in minutes)
