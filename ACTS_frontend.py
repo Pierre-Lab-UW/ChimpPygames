@@ -74,7 +74,7 @@ class FrontEnd(object):
             log('system name [{}] not in autoshaping.csv'.format(system_name))   # log error if not
 
         self.device = None
-        self.screen = Screen(fullscreen=True,
+        self.screen = Screen(fullscreen=False,
                              size=(self.g_params['SCREEN_W'], self.g_params['SCREEN_H']),
                              color=BLACK)
         if not self.g_params['CURSOR_VISIBLE']:

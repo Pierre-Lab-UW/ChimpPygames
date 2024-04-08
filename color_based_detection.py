@@ -112,7 +112,11 @@ def color_search() -> None:
 
     while cap.isOpened():
         # Read a frame from the camera
-        ret, frame = cap.read()
+        ret, frame = False, None
+        try:
+            ret, frame = cap.read()
+        except:
+            continue
 
 
         global frame_hsv
