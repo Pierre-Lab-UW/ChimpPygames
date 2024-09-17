@@ -132,6 +132,8 @@ class SHAPE2(object):
                         pass   # ignore anything in raw_progress that can't be parsed as int
                 trials_to_check_criterion = int(self.m_params[self.monkey_name]['SHAPE2trials'])
                 trials_to_achieve_criterion = int(self.m_params[self.monkey_name]['SHAPE2criterion'])
+                print("Progression status: "+str(len(progress) >= trials_to_check_criterion)+", "+str(sum(progress[-trials_to_check_criterion:]) >= trials_to_achieve_criterion))
+                print("NumTrials: "+str(len(progress))+", Sum: "+str(sum(progress[-trials_to_check_criterion:])))
                 if (len(progress) >= trials_to_check_criterion) and \
                         (sum(progress[-trials_to_check_criterion:]) >= trials_to_achieve_criterion):
                     self.progressed = True

@@ -499,6 +499,8 @@ class FrontEnd(object):
                                 task_ix = int(line.replace('\n', '').replace('\r', ''))
                             task_order = self.determine_task_order(active_monkey=active_monkey)
                             task_to_load = task_order[task_ix]
+                            log("Task index: "+str(task_ix))
+                            log("Task to load: "+str(task_to_load))
                             if task_to_load[:2] == 'ww':
                                 experiment = eval('modules.{}.{}(screen=self.screen, monkey_name=active_monkey, g_params=self.g_params, m_params=self.m_params, arm_used=None, clipart=ww_clipart)'.format(task_to_load, task_to_load))
                             elif task_to_load[:9] == 'MTSsimple': #attempting to add in basic shape clipart only for MTSsimple module MMM 1Aug2022

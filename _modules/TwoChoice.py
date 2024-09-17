@@ -83,7 +83,7 @@ class TwoChoice(object):
                 timestamp = float(f.read())
             except ValueError:
                 timestamp = 0
-
+        print("Timestamp for TwoChoice: "+str(timestamp))
         if (time.time() - timestamp) > (int(self.m_params[self.monkey_name]['2choicereset'])):
             # get new images for new set
             self.posImage = random.choice(list(self.clipart.keys()))
