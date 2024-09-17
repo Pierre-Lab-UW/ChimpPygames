@@ -325,7 +325,6 @@ class FrontEnd(object):
         for k, v in self.g_params.items():
             log('{} :: {}'.format(k, v))
         self.import_primate_params()
-        log(self.m_params)
 
         # LOAD READER #comment out for running in Pycharm
         # #
