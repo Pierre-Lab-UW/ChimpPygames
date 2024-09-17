@@ -1,0 +1,2 @@
+monkey_name,date,time,arm,task_name,trial,stim_size,touch_x,touch_y,stim_x,stim_y,correct
+GROUP,2024-02-14,12:22:25,None,SHAPE0,1,240,578,465,392,264,1

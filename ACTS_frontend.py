@@ -16,13 +16,15 @@ To add in a new program
              name must follow python naming rules - one word, can't start with number, etc
         ::  init new class with g_params, m_params, screen, clipart
         ::  class should have at least two functions: on_loop and on_touch
-        ::  new code can import * from _modules.pgtools to have access to general stuff - sounds, data writing, etc
+        ::  new code can import * from _modules.pgtools to have access to general stuff - #sounds, data writing, etc
   2 ::  have new code access params from g_params and m_params. add new columns to primate_params.csv accordingly
         ::  m_params varnames taken from first row, so need to follow python naming rules
 """
+import subprocess
 from _modules.pgtools import *
 import _modules as modules
 
+from color_based_detection import *
 
 class FrontEnd(object):
     """
@@ -146,11 +148,13 @@ class FrontEnd(object):
         try:
             time_to_autoshape = int(self.a_params[system_name]) * 60 * 1000
         except:
-            time_to_autoshape = 60 * 60 * 1000   # if system_name isn't in a_params
+            #Error: Param not being loaded: Original val was 60*60*1000c
+            time_to_autoshape = 10 * 1000   # if system_name isn't in a_params
         needs_shaping = pg.time.get_ticks() - time_to_autoshape > time_since_autoshape
         after_8am = int(time.strftime('%H')) >= 8
         before_4pm = int(time.strftime('%H')) < 16
         if needs_shaping and after_8am and before_4pm:
+            log("Autoshaping now...")
             autoshape_datafile = os.path.join(HOSTROOT, '_data', 'autoshaping_' + system_name + '_week' + week + '.csv')
             write_ln(autoshape_datafile, [today, time.strftime('%H:%M:%S')])
             for i, color in enumerate([(0,255,255), (1, 1, 1)] * 2):
@@ -158,7 +162,8 @@ class FrontEnd(object):
                 self.screen.fg.blit(self.screen.bg, (0, 0))
                 pg.display.update()
                 time.sleep(.3)
-            sounds['correct'].play()
+            #Error: Correct sound unable to be loaded
+            ##sounds['correct'].play()
             pellet()
             return True
         return False
@@ -171,7 +176,7 @@ class FrontEnd(object):
                 self.screen.fg.blit(self.screen.bg, (0, 0))
                 pg.display.update()
                 time.sleep(.3)
-            sounds['correct'].play()
+            #sounds['correct'].play()
             pellet()
         if pg.time.get_ticks() - freebies[active_monkey] > self.g_params['TIME_TO_AUTOSHAPE']:
             for i, color in enumerate([CORRECT_COLOR, (1, 1, 1)] * 2):
@@ -179,7 +184,7 @@ class FrontEnd(object):
                 self.screen.fg.blit(self.screen.bg, (0, 0))
                 pg.display.update()
                 time.sleep(.3)
-            sounds['correct'].play()
+            #sounds['correct'].play()
             pellet()
             freebies[active_monkey] = pg.time.get_ticks()
         return freebies
@@ -320,14 +325,15 @@ class FrontEnd(object):
         for k, v in self.g_params.items():
             log('{} :: {}'.format(k, v))
         self.import_primate_params()
-        log(self.m_params)
 
         # LOAD READER #comment out for running in Pycharm
         # #
         if self.g_params['RFID_READER_CONNECTED']:
             import serial
             self.device = serial.Serial('/dev/serial0', 9600, timeout=0)
-
+        else:
+            run()
+            log("INFO: Running camera on seperate thread.")
         # MAKE ANY AMERICAN MONKEY CHANGES
         # #
         if self.g_params['STIMULI_COLORS'] == 'normal':
@@ -449,7 +455,11 @@ class FrontEnd(object):
                                 break
                     elif tag == 'read_error':
                         status = 'read_error'
-                
+                else:
+                    monkey_name = state_color.max_color
+                    self.screen.fg.blit(sm_font.render(monkey_name, True, Color('white')), (256, 115))
+                    #log("Color: "+str(state_color.max_color))
+                    #log("Monkey Name:"+str(monkey_name))
                 # get any typed input
                 # #
                 for key in self.m_params.keys():
@@ -471,6 +481,7 @@ class FrontEnd(object):
                 new_monkey_takes_over = monkey_name is not None and monkey_name != active_monkey
                 should_progress = experiment.progressed if experiment is not None else False
                 if (monkey_enters_anew or new_monkey_takes_over or should_progress) and monkey_name is not None:
+                    log(self.m_params)
                     if monkey_enters_anew or new_monkey_takes_over:
                         active_monkey = monkey_name
                     try:
@@ -489,11 +500,11 @@ class FrontEnd(object):
                             task_order = self.determine_task_order(active_monkey=active_monkey)
                             task_to_load = task_order[task_ix]
                             if task_to_load[:2] == 'ww':
-                                experiment = eval('modules.{}.{}(screen=self.screen, monkey_name=active_monkey, g_params=self.g_params, m_params=self.m_params, arm_used=arm_used, clipart=ww_clipart)'.format(task_to_load, task_to_load))
+                                experiment = eval('modules.{}.{}(screen=self.screen, monkey_name=active_monkey, g_params=self.g_params, m_params=self.m_params, arm_used=None, clipart=ww_clipart)'.format(task_to_load, task_to_load))
                             elif task_to_load[:9] == 'MTSsimple': #attempting to add in basic shape clipart only for MTSsimple module MMM 1Aug2022
-                                experiment = eval('modules.{}.{}(screen=self.screen, monkey_name=active_monkey, g_params=self.g_params, m_params=self.m_params, arm_used=arm_used, clipart=basicshapes_clipart)'.format(task_to_load, task_to_load))
+                                experiment = eval('modules.{}.{}(screen=self.screen, monkey_name=active_monkey, g_params=self.g_params, m_params=self.m_params, arm_used=None, clipart=basicshapes_clipart)'.format(task_to_load, task_to_load))
                             else:
-                                experiment = eval('modules.{}.{}(screen=self.screen, monkey_name=active_monkey, g_params=self.g_params, m_params=self.m_params, arm_used=arm_used, clipart=clipart)'.format(task_to_load, task_to_load))
+                                experiment = eval('modules.{}.{}(screen=self.screen, monkey_name=active_monkey, g_params=self.g_params, m_params=self.m_params, arm_used=None, clipart=clipart)'.format(task_to_load, task_to_load))
                             status = 'running'
                             experiment.new_trial()
                         else:
@@ -556,7 +567,7 @@ class FrontEnd(object):
                                         else:
                                             trial_tracker[active_monkey] = 1   # init trial cap
                             if status in ['ITI']:
-                                sounds['correct'].play()
+                                #sounds['correct'].play()
                                 self.feedback_color(x=0, y=200, w=768, h=768,
                                                     sq_color=CORRECT_COLOR,
                                                     msg='GOOD!!!!', msg_color=(0, 255, 255))
@@ -604,7 +615,7 @@ class FrontEnd(object):
                                 self.screen.fg.blit(self.screen.bg, (0, 0))
                                 pg.draw.lines(self.screen.fg, Color('olivedrab'), True, [(79,455),(221,751),(119,689),(897,179),(725,724),(516,149),(661,187),(230,534),(312,496),(914,405),(339,449),(34,750),(70,615),(308,539),(404,753),(231,694),(938,172),(842,365),(429,745),(223,288),(107,404),(636,176),(626,682),(514,15),(364,687)],10)
                                 pg.display.update()
-                                sounds['correct'].play()
+                                #sounds['correct'].play()
                                 for i in range(int(self.g_params['REWARD_AMOUNT'])):
                                     if self.g_params['REWARD_TYPE'] != 'pellet':
                                         pellet(time_to_close_relay=1.25, channel=17)    # liquid reward
@@ -613,7 +624,7 @@ class FrontEnd(object):
 
                             if status in ['timeout']:
                                 pg.display.update()
-                                sounds['incorrect'].play()
+                                #sounds['incorrect'].play()
                                 self.feedback_color(x=450, y=200, w=768, h=768,
                                                     sq_color=INCORRECT_COLOR,
                                                     msg='X', msg_color=(255, 0, 0))
@@ -624,7 +635,7 @@ class FrontEnd(object):
                                 self.screen.fg.blit(self.screen.bg, (0, 0))
                                 pg.draw.lines(self.screen.fg, Color('tomato'), True, [(79,455),(221,751),(119,689),(897,179),(725,724),(516,149),(661,187),(230,534),(312,496),(914,405),(339,449),(34,750),(70,615),(308,539),(404,753),(231,694),(938,172),(842,365),(429,745),(223,288),(107,404),(636,176),(626,682),(514,15),(364,687)],10)
                                 pg.display.update()
-                                sounds['incorrect'].play()
+                                #sounds['incorrect'].play()
 
                             pg.event.clear()
                             break

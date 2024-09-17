@@ -12,7 +12,13 @@ WW2021
 # IMPORTS
 # #
 import sys, os, random, time, glob, logging, math
-import RPi.GPIO as GPIO
+try:
+    # checks if you have access to RPi.GPIO, which is available inside RPi
+    import RPi.GPIO as GPIO
+except:
+    # In case of exception, you are executing your script outside of RPi, so import Mock.GPIO
+    import Mock.GPIO as GPIO
+
 import pygame as pg
 from pygame.locals import *
 

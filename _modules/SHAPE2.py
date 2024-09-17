@@ -82,7 +82,9 @@ class SHAPE2(object):
         distance_from_stimulus = math.sqrt(x_diff + y_diff)
         correct_radius = (self.stim_size / 2) + (.30 * self.stim_size)
         nothing_happens_radius = (self.stim_size / 2) + (.45 * self.stim_size)
-
+        print("Touch X, Y: "+str(touch_x)+","+str(touch_y))
+        print("Center: "+str(self.stimulus.center))
+        print("Distance from stim: "+str(distance_from_stimulus))
         # if correct touch
         # #
         if distance_from_stimulus < correct_radius:
