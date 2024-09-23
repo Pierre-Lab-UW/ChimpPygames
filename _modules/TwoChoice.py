@@ -147,6 +147,7 @@ class TwoChoice(object):
         self.trial += 1                                                         # iterate trial counter
         self.stim_size = int(self.m_params[self.monkey_name]['2choicesize'])    # get stim_size
 
+        
         while True:
             if self.g_params['RESTRICT_SCREEN']:
                 (self.posX, self.posY) = (random.randint(int(self.g_params['SCREEN_W'] * .15),
@@ -164,11 +165,13 @@ class TwoChoice(object):
                                           random.randint(0, (self.g_params['SCREEN_H'] - self.stim_size)))
             self.posStim = Stimulus(size=self.stim_size, pos=(self.posX, self.posY), image=self.clipart[self.posImage])
             self.negStim = Stimulus(size=self.stim_size, pos=(self.negX, self.negY), image=self.clipart[self.negImage])
-
-            if self.posStim.rect.colliderect(self.negStim) or math.sqrt((self.posX - self.negX)**2 + (self.posY - self.negY)**2) < 500:
+            print("loop")
+            if self.posStim.rect.colliderect(self.negStim):
+                print(self.posStim.rect.colliderect(self.negStim), math.sqrt((self.posX - self.negX)**2 + (self.posY - self.negY)**2) < 500)
                 continue
             else:
                 break
+            
 
     def on_loop(self):
         self.posStim.draw_stimulus(screen=self.screen)
