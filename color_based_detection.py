@@ -142,7 +142,7 @@ def color_search() -> None:
     # Release the camera
     cap.release()
     cv2.destroyAllWindows()
-    return calc_max_color(color_dictionary, frame)
+    #return calc_max_color(color_dictionary, frame)
 
     
 
