@@ -90,7 +90,7 @@ class Screen(object):
 
     def refresh(self, color=None):
         self.bg.fill(Color(color))
-        self.fg.blit(self.screen.bg, (0, 0))
+        self.fg.blit(self.bg, (0, 0))
 
 
 # STIMULUS
