@@ -9,6 +9,7 @@ SocialStimuli
 from _modules.pgtools import *
 import pygame as pg
 import time
+from pathlib import Path
 
 class SocialStimuli(object):
     def __init__(self, screen=None, monkey_name=None, g_params=None, m_params=None, arm_used=None, clipart=None):
@@ -33,7 +34,7 @@ class SocialStimuli(object):
 
         #custom parameters(these need to be loaded in)
         self.trialAmt = 6
-        self.stim_size = 150
+        self.stim_size = 100
         self.stimTime = 5 #seconds
         #tracking
         self.playingGif = False
@@ -46,6 +47,7 @@ class SocialStimuli(object):
         #how long should circle be shown before failed trial?
         self.trial += 1
         self.playingGif = False
+        self.screen.refresh("black")
         
 
         
@@ -70,8 +72,12 @@ class SocialStimuli(object):
         if distance_from_stimulus < correct_radius:
             print("touched stimuli")
             self.screen.refresh("black")
-            pg.draw.circle(self.screen.bg, Color('red'),
-                                        (self.stim_x, self.stim_y), self.stim_size)
+            file = random.choice(os.listdir("_modules/_clipart"))
+            image = pg.image.load(os.path.join("_modules/_clipart", file))
+
+            # pg.draw.circle(self.screen.bg, Color('red'),
+            #                             (self.stim_x, self.stim_y), self.stim_size)
+            self.screen.bg.blit(image, (self.stim_x, self.stim_y))
             self.playingGif = True
             #play the gif
             self.timeStartedPlaying = time.time()

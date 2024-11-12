@@ -164,7 +164,7 @@ class FrontEnd(object):
                 time.sleep(.3)
             #Error: Correct sound unable to be loaded
             ##sounds['correct'].play()
-            pellet()
+            #pellet()
             return True
         return False
 
