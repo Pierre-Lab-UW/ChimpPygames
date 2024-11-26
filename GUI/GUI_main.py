@@ -6,6 +6,7 @@ import os
 
 
 
+
 class ParameterEditorApp:
     def __init__(self, root):
         self.root = root
@@ -16,39 +17,69 @@ class ParameterEditorApp:
             "SHAPE0": [],
             "SHAPE1": ["SHAPE1_to_decrement", "SHAPE1trials", "SHAPE1criterion"],
             "SHAPE2": ["SHAPE2size", "SHAPE2_zones", "SHAPE2trials", "SHAPE2criterion"],
-            "Two_Choice_Discrimination": ["2choicesize","2choicereset","2choiceproblems","2choicetrials","2choicecorrect"],
+            "Two_Choice_Discrimination": ["2choicesize", "2choicereset", "2choiceproblems", "2choicetrials", "2choicecorrect"],
             "Match_To_Sample": [],
-            "Delayed_Match_To_Sample": ["dMTSsize","dMTStrials","dMTScriterion"],
+            "Delayed_Match_To_Sample": ["dMTSsize", "dMTStrials", "dMTScriterion"],
             "Oddity_Testing": [],
             "Delayed_Response_Task": [],
             "SocialStimuli": []
         }
-        
+
+        # Set up scrolling
+        self.setup_scrollable_area()
+
         # UI Elements
         self.setup_ui()
 
+    def setup_scrollable_area(self):
+        # Create a canvas and a scrollbar
+        self.canvas = tk.Canvas(self.root)
+        self.scrollbar = tk.Scrollbar(self.root, orient="vertical", command=self.canvas.yview)
+        self.scrollbar.pack(side="right", fill="y")
+        self.canvas.pack(side="left", fill="both", expand=True)
+
+        # Configure the canvas to use the scrollbar
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.canvas.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+
+        # Create a frame inside the canvas
+        self.scrollable_frame = tk.Frame(self.canvas)
+
+        # Add the frame to the canvas
+        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+
+        # Configure root grid weights
+        self.root.rowconfigure(0, weight=1)
+        self.root.columnconfigure(0, weight=1)
+
     def setup_ui(self):
         # Load CSV file button
-        tk.Button(self.root, text="Load Parameter File", command=self.load_file).pack(pady=10)
+        tk.Button(self.scrollable_frame, text="Load Parameter File", command=self.load_file).grid(row=0, column=0, columnspan=2, pady=10, sticky="n")
 
         # Global Parameters Section
-        self.global_frame = tk.LabelFrame(self.root, text="Global Parameters")
-        self.global_frame.pack(fill="x", padx=10, pady=5)
+        self.global_frame = tk.LabelFrame(self.scrollable_frame, text="Global Parameters")
+        self.global_frame.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
         tk.Button(self.global_frame, text="Edit Global Parameters", command=self.edit_global_parameters).pack()
 
         # Task Buttons
-        self.tasks_frame = tk.LabelFrame(self.root, text="Task Parameters")
-        self.tasks_frame.pack(fill="x", padx=10, pady=5)
+        self.tasks_frame = tk.LabelFrame(self.scrollable_frame, text="Task Parameters")
+        self.tasks_frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
 
         self.task_buttons = {}
         for task in self.tasks_params:
-            button = tk.Button(self.tasks_frame, text=f"Edit {task} Parameters", 
+            button = tk.Button(self.tasks_frame, text=f"Edit {task} Parameters",
                                command=lambda t=task: self.edit_task_parameters(t))
             button.pack(fill="x", padx=5, pady=2)
             self.task_buttons[task] = button
-        
+
         # Start Program Button
-        tk.Button(self.root, text="Start Program", command=self.start_program).pack(pady=10)
+        tk.Button(self.scrollable_frame, text="Start Program", command=self.start_program).grid(row=3, column=0, columnspan=2, pady=10, sticky="s")
+
+        # Configure grid weights for expansion
+        self.scrollable_frame.rowconfigure(1, weight=1)  # Global Parameters section
+        self.scrollable_frame.rowconfigure(2, weight=5)  # Task Parameters section
+        self.scrollable_frame.columnconfigure(0, weight=1)
+
     
     def start_program(self):
         try:

@@ -22,7 +22,7 @@ class FileEditor:
         self.df.iloc[subject_number, self.df.columns.get_loc("Left Wrist")] = subject_id
         self.save_csv()
 
-    def set_tasks_order(self, subject_number:int, task_list:list[str]):
+    def set_tasks_order(self, subject_number:int, task_list):
         if subject_number > 2 or subject_number < 0:
             raise Exception("Subject number not valid!")
         string = ""
