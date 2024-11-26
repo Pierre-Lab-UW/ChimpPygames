@@ -6,7 +6,6 @@ import os
 
 
 
-
 class ParameterEditorApp:
     def __init__(self, root):
         self.root = root
@@ -17,69 +16,39 @@ class ParameterEditorApp:
             "SHAPE0": [],
             "SHAPE1": ["SHAPE1_to_decrement", "SHAPE1trials", "SHAPE1criterion"],
             "SHAPE2": ["SHAPE2size", "SHAPE2_zones", "SHAPE2trials", "SHAPE2criterion"],
-            "Two_Choice_Discrimination": ["2choicesize", "2choicereset", "2choiceproblems", "2choicetrials", "2choicecorrect"],
+            "Two_Choice_Discrimination": ["2choicesize","2choicereset","2choiceproblems","2choicetrials","2choicecorrect"],
             "Match_To_Sample": [],
-            "Delayed_Match_To_Sample": ["dMTSsize", "dMTStrials", "dMTScriterion"],
+            "Delayed_Match_To_Sample": ["dMTSsize","dMTStrials","dMTScriterion"],
             "Oddity_Testing": [],
             "Delayed_Response_Task": [],
             "SocialStimuli": []
         }
-
-        # Set up scrolling
-        self.setup_scrollable_area()
-
+        
         # UI Elements
         self.setup_ui()
 
-    def setup_scrollable_area(self):
-        # Create a canvas and a scrollbar
-        self.canvas = tk.Canvas(self.root)
-        self.scrollbar = tk.Scrollbar(self.root, orient="vertical", command=self.canvas.yview)
-        self.scrollbar.pack(side="right", fill="y")
-        self.canvas.pack(side="left", fill="both", expand=True)
-
-        # Configure the canvas to use the scrollbar
-        self.canvas.configure(yscrollcommand=self.scrollbar.set)
-        self.canvas.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
-
-        # Create a frame inside the canvas
-        self.scrollable_frame = tk.Frame(self.canvas)
-
-        # Add the frame to the canvas
-        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
-
-        # Configure root grid weights
-        self.root.rowconfigure(0, weight=1)
-        self.root.columnconfigure(0, weight=1)
-
     def setup_ui(self):
         # Load CSV file button
-        tk.Button(self.scrollable_frame, text="Load Parameter File", command=self.load_file).grid(row=0, column=0, columnspan=2, pady=10, sticky="n")
+        tk.Button(self.root, text="Load Parameter File", command=self.load_file).pack(pady=10)
 
         # Global Parameters Section
-        self.global_frame = tk.LabelFrame(self.scrollable_frame, text="Global Parameters")
-        self.global_frame.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        self.global_frame = tk.LabelFrame(self.root, text="Global Parameters")
+        self.global_frame.pack(fill="x", padx=10, pady=5)
         tk.Button(self.global_frame, text="Edit Global Parameters", command=self.edit_global_parameters).pack()
 
         # Task Buttons
-        self.tasks_frame = tk.LabelFrame(self.scrollable_frame, text="Task Parameters")
-        self.tasks_frame.grid(row=2, column=0, columnspan=2, padx=10, pady=5, sticky="ew")
+        self.tasks_frame = tk.LabelFrame(self.root, text="Task Parameters")
+        self.tasks_frame.pack(fill="x", padx=10, pady=5)
 
         self.task_buttons = {}
         for task in self.tasks_params:
-            button = tk.Button(self.tasks_frame, text=f"Edit {task} Parameters",
+            button = tk.Button(self.tasks_frame, text=f"Edit {task} Parameters", 
                                command=lambda t=task: self.edit_task_parameters(t))
             button.pack(fill="x", padx=5, pady=2)
             self.task_buttons[task] = button
-
+        
         # Start Program Button
-        tk.Button(self.scrollable_frame, text="Start Program", command=self.start_program).grid(row=3, column=0, columnspan=2, pady=10, sticky="s")
-
-        # Configure grid weights for expansion
-        self.scrollable_frame.rowconfigure(1, weight=1)  # Global Parameters section
-        self.scrollable_frame.rowconfigure(2, weight=5)  # Task Parameters section
-        self.scrollable_frame.columnconfigure(0, weight=1)
-
+        tk.Button(self.root, text="Start Program", command=self.start_program).pack(pady=10)
     
     def start_program(self):
         try:
@@ -117,7 +86,7 @@ class ParameterEditorApp:
         window.title("Edit Global Parameters")
 
         frame = tk.Frame(window)
-        frame.pack(fill="both", expand=True, padx=10, pady=10)
+        frame.pack(fill="both", expand=True, padx=5, pady=5)
 
         # Inputs for global parameters
         subject_1_name = tk.StringVar(value=self.file_editor.df.iloc[0]["Subject"])
@@ -125,25 +94,26 @@ class ParameterEditorApp:
         subject_1_id = tk.StringVar(value=self.file_editor.df.iloc[0]["Left Wrist"])
         subject_2_id = tk.StringVar(value=self.file_editor.df.iloc[1]["Left Wrist"])
 
-        tk.Label(frame, text="Subject 1 Name").grid(row=0, column=0, pady=2)
-        tk.Entry(frame, textvariable=subject_1_name).grid(row=0, column=1, pady=2)
-        tk.Label(frame, text="Subject 2 Name").grid(row=1, column=0, pady=2)
-        tk.Entry(frame, textvariable=subject_2_name).grid(row=1, column=1, pady=2)
+        # Labels and entries for names and IDs
+        tk.Label(frame, text="Subject 1 Name").grid(row=0, column=0, pady=2, sticky="w")
+        tk.Entry(frame, textvariable=subject_1_name).grid(row=0, column=1, pady=2, sticky="ew")
+        tk.Label(frame, text="Subject 2 Name").grid(row=1, column=0, pady=2, sticky="w")
+        tk.Entry(frame, textvariable=subject_2_name).grid(row=1, column=1, pady=2, sticky="ew")
 
-        tk.Label(frame, text="Subject 1 ID").grid(row=2, column=0, pady=2)
-        tk.Entry(frame, textvariable=subject_1_id).grid(row=2, column=1, pady=2)
-        tk.Label(frame, text="Subject 2 ID").grid(row=3, column=0, pady=2)
-        tk.Entry(frame, textvariable=subject_2_id).grid(row=3, column=1, pady=2)
+        tk.Label(frame, text="Subject 1 ID").grid(row=2, column=0, pady=2, sticky="w")
+        tk.Entry(frame, textvariable=subject_1_id).grid(row=2, column=1, pady=2, sticky="ew")
+        tk.Label(frame, text="Subject 2 ID").grid(row=3, column=0, pady=2, sticky="w")
+        tk.Entry(frame, textvariable=subject_2_id).grid(row=3, column=1, pady=2, sticky="ew")
 
-        # Task order section
+        # Task order section for Subject 1
         tk.Label(frame, text="Subject 1 Task Order").grid(row=4, column=0, pady=5, sticky="w")
-        subject_1_task_list = tk.Listbox(frame, height=10, selectmode=tk.SINGLE, exportselection=False)
+        subject_1_task_list = tk.Listbox(frame, height=5, selectmode=tk.SINGLE, exportselection=False)
         subject_1_tasks = self.file_editor.df.iloc[0]["task-order"].split("-") if "task-order" in self.file_editor.df.columns else list(self.tasks_params.keys())
         for task in subject_1_tasks:
             subject_1_task_list.insert(tk.END, task)
-        subject_1_task_list.grid(row=5, column=0, pady=2, sticky="w")
+        subject_1_task_list.grid(row=5, column=0, pady=2, sticky="ew")
 
-        # Dropdown menu for available tasks
+        # Dropdown menu for available tasks for Subject 1
         available_tasks = list(self.tasks_params.keys())
         subject_1_selected_task = tk.StringVar(value=available_tasks[0])
 
@@ -176,19 +146,19 @@ class ParameterEditorApp:
                 subject_1_tasks.pop(index)
                 update_task_list(subject_1_task_list, subject_1_tasks)
 
-        tk.OptionMenu(frame, subject_1_selected_task, *available_tasks).grid(row=6, column=0, pady=2, sticky="w")
-        tk.Button(frame, text="Add Task", command=add_subject_1_task).grid(row=7, column=0, pady=2)
-        tk.Button(frame, text="Delete Task", command=delete_subject_1_task).grid(row=8, column=0, pady=2)
-        tk.Button(frame, text="Move Up", command=move_subject_1_task_up).grid(row=9, column=0, pady=2)
-        tk.Button(frame, text="Move Down", command=move_subject_1_task_down).grid(row=10, column=0, pady=2)
+        tk.OptionMenu(frame, subject_1_selected_task, *available_tasks).grid(row=6, column=0, pady=2, sticky="ew")
+        tk.Button(frame, text="Add Task", command=add_subject_1_task).grid(row=7, column=0, pady=2, sticky="ew")
+        tk.Button(frame, text="Delete Task", command=delete_subject_1_task).grid(row=8, column=0, pady=2, sticky="ew")
+        tk.Button(frame, text="Move Up", command=move_subject_1_task_up).grid(row=9, column=0, pady=2, sticky="ew")
+        tk.Button(frame, text="Move Down", command=move_subject_1_task_down).grid(row=10, column=0, pady=2, sticky="ew")
 
-        # Similar controls for Subject 2
+        # Task order section for Subject 2
         tk.Label(frame, text="Subject 2 Task Order").grid(row=4, column=1, pady=5, sticky="w")
-        subject_2_task_list = tk.Listbox(frame, height=10, selectmode=tk.SINGLE, exportselection=False)
+        subject_2_task_list = tk.Listbox(frame, height=5, selectmode=tk.SINGLE, exportselection=False)
         subject_2_tasks = self.file_editor.df.iloc[1]["task-order"].split("-") if "task-order" in self.file_editor.df.columns else list(self.tasks_params.keys())
         for task in subject_2_tasks:
             subject_2_task_list.insert(tk.END, task)
-        subject_2_task_list.grid(row=5, column=1, pady=2, sticky="w")
+        subject_2_task_list.grid(row=5, column=1, pady=2, sticky="ew")
 
         subject_2_selected_task = tk.StringVar(value=available_tasks[0])
 
@@ -221,11 +191,11 @@ class ParameterEditorApp:
                 subject_2_tasks.pop(index)
                 update_task_list(subject_2_task_list, subject_2_tasks)
 
-        tk.OptionMenu(frame, subject_2_selected_task, *available_tasks).grid(row=6, column=1, pady=2, sticky="w")
-        tk.Button(frame, text="Add Task", command=add_subject_2_task).grid(row=7, column=1, pady=2)
-        tk.Button(frame, text="Delete Task", command=delete_subject_2_task).grid(row=8, column=1, pady=2)
-        tk.Button(frame, text="Move Up", command=move_subject_2_task_up).grid(row=9, column=1, pady=2)
-        tk.Button(frame, text="Move Down", command=move_subject_2_task_down).grid(row=10, column=1, pady=2)
+        tk.OptionMenu(frame, subject_2_selected_task, *available_tasks).grid(row=6, column=1, pady=2, sticky="ew")
+        tk.Button(frame, text="Add Task", command=add_subject_2_task).grid(row=7, column=1, pady=2, sticky="ew")
+        tk.Button(frame, text="Delete Task", command=delete_subject_2_task).grid(row=8, column=1, pady=2, sticky="ew")
+        tk.Button(frame, text="Move Up", command=move_subject_2_task_up).grid(row=9, column=1, pady=2, sticky="ew")
+        tk.Button(frame, text="Move Down", command=move_subject_2_task_down).grid(row=10, column=1, pady=2, sticky="ew")
 
         def update_task_list(listbox, tasks):
             listbox.delete(0, tk.END)
