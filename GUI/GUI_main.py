@@ -25,19 +25,43 @@ class ParameterEditorApp:
         }
         
         # UI Elements
+        self.create_scrollable_frame()
+
+    
+    def create_scrollable_frame(self):
+        # Create a canvas and scrollbar
+        canvas = tk.Canvas(self.root)
+        scrollbar = tk.Scrollbar(self.root, orient="vertical", command=canvas.yview)
+        scrollable_frame = tk.Frame(canvas)
+
+        # Configure the scrollable area
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        # Store the scrollable frame
+        self.scrollable_frame = scrollable_frame
         self.setup_ui()
+
 
     def setup_ui(self):
         # Load CSV file button
-        tk.Button(self.root, text="Load Parameter File", command=self.load_file).pack(pady=10)
+        tk.Button(self.scrollable_frame, text="Load Parameter File", command=self.load_file).pack(pady=10)
 
         # Global Parameters Section
-        self.global_frame = tk.LabelFrame(self.root, text="Global Parameters")
+        self.global_frame = tk.LabelFrame(self.scrollable_frame, text="Global Parameters")
         self.global_frame.pack(fill="x", padx=10, pady=5)
         tk.Button(self.global_frame, text="Edit Global Parameters", command=self.edit_global_parameters).pack()
 
         # Task Buttons
-        self.tasks_frame = tk.LabelFrame(self.root, text="Task Parameters")
+        self.tasks_frame = tk.LabelFrame(self.scrollable_frame, text="Task Parameters")
         self.tasks_frame.pack(fill="x", padx=10, pady=5)
 
         self.task_buttons = {}
@@ -46,9 +70,10 @@ class ParameterEditorApp:
                                command=lambda t=task: self.edit_task_parameters(t))
             button.pack(fill="x", padx=5, pady=2)
             self.task_buttons[task] = button
-        
+
         # Start Program Button
-        tk.Button(self.root, text="Start Program", command=self.start_program).pack(pady=10)
+        tk.Button(self.scrollable_frame, text="Start Program", command=self.start_program).pack(pady=10)
+
     
     def start_program(self):
         try:
