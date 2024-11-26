@@ -63,10 +63,11 @@ except:
 # LOAD SOUNDS
 # #
 sounds = {}
-for sound in glob.glob(os.path.join('_sounds', '*.wav')):
+for sound in glob.glob(os.path.join(r'C:\Users\siddh\OneDrive\Desktop\Coding\Work\ChimpPygames\_modules\_sounds', '*.wav')):
     sounds[os.path.basename(sound).replace('.wav', '')] = pg.mixer.Sound(sound)
     sounds[os.path.basename(sound).replace('.wav', '')].set_volume(1)
 
+print("Sounds: "+str(sounds.keys()))
 
 # SCREEN
 # #

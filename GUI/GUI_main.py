@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
-from GUI import FileEditor  # Import your FileEditor class
+from FileEditor import FileEditor  # Import your FileEditor class
 
 
 
@@ -81,15 +81,116 @@ class ParameterEditorApp:
         tk.Label(frame, text="Subject 2 ID").grid(row=3, column=0, pady=2)
         tk.Entry(frame, textvariable=subject_2_id).grid(row=3, column=1, pady=2)
 
+        # Task order section
+        tk.Label(frame, text="Subject 1 Task Order").grid(row=4, column=0, pady=5, sticky="w")
+        subject_1_task_list = tk.Listbox(frame, height=10, selectmode=tk.SINGLE, exportselection=False)
+        subject_1_tasks = self.file_editor.df.iloc[0]["Task Order"].split("-") if "Task Order" in self.file_editor.df.columns else list(self.tasks_params.keys())
+        for task in subject_1_tasks:
+            subject_1_task_list.insert(tk.END, task)
+        subject_1_task_list.grid(row=5, column=0, pady=2, sticky="w")
+
+        # Dropdown menu for available tasks
+        available_tasks = list(self.tasks_params.keys())
+        subject_1_selected_task = tk.StringVar(value=available_tasks[0])
+
+        def move_subject_1_task_up():
+            selected = subject_1_task_list.curselection()
+            if selected and selected[0] > 0:
+                index = selected[0]
+                subject_1_tasks[index], subject_1_tasks[index - 1] = subject_1_tasks[index - 1], subject_1_tasks[index]
+                update_task_list(subject_1_task_list, subject_1_tasks)
+                subject_1_task_list.selection_set(index - 1)
+
+        def move_subject_1_task_down():
+            selected = subject_1_task_list.curselection()
+            if selected and selected[0] < len(subject_1_tasks) - 1:
+                index = selected[0]
+                subject_1_tasks[index], subject_1_tasks[index + 1] = subject_1_tasks[index + 1], subject_1_tasks[index]
+                update_task_list(subject_1_task_list, subject_1_tasks)
+                subject_1_task_list.selection_set(index + 1)
+
+        def add_subject_1_task():
+            new_task = subject_1_selected_task.get()
+            if new_task not in subject_1_tasks:
+                subject_1_tasks.append(new_task)
+                update_task_list(subject_1_task_list, subject_1_tasks)
+
+        def delete_subject_1_task():
+            selected = subject_1_task_list.curselection()
+            if selected:
+                index = selected[0]
+                subject_1_tasks.pop(index)
+                update_task_list(subject_1_task_list, subject_1_tasks)
+
+        tk.OptionMenu(frame, subject_1_selected_task, *available_tasks).grid(row=6, column=0, pady=2, sticky="w")
+        tk.Button(frame, text="Add Task", command=add_subject_1_task).grid(row=7, column=0, pady=2)
+        tk.Button(frame, text="Delete Task", command=delete_subject_1_task).grid(row=8, column=0, pady=2)
+        tk.Button(frame, text="Move Up", command=move_subject_1_task_up).grid(row=9, column=0, pady=2)
+        tk.Button(frame, text="Move Down", command=move_subject_1_task_down).grid(row=10, column=0, pady=2)
+
+        # Similar controls for Subject 2
+        tk.Label(frame, text="Subject 2 Task Order").grid(row=4, column=1, pady=5, sticky="w")
+        subject_2_task_list = tk.Listbox(frame, height=10, selectmode=tk.SINGLE, exportselection=False)
+        subject_2_tasks = self.file_editor.df.iloc[1]["Task Order"].split("-") if "Task Order" in self.file_editor.df.columns else list(self.tasks_params.keys())
+        for task in subject_2_tasks:
+            subject_2_task_list.insert(tk.END, task)
+        subject_2_task_list.grid(row=5, column=1, pady=2, sticky="w")
+
+        subject_2_selected_task = tk.StringVar(value=available_tasks[0])
+
+        def move_subject_2_task_up():
+            selected = subject_2_task_list.curselection()
+            if selected and selected[0] > 0:
+                index = selected[0]
+                subject_2_tasks[index], subject_2_tasks[index - 1] = subject_2_tasks[index - 1], subject_2_tasks[index]
+                update_task_list(subject_2_task_list, subject_2_tasks)
+                subject_2_task_list.selection_set(index - 1)
+
+        def move_subject_2_task_down():
+            selected = subject_2_task_list.curselection()
+            if selected and selected[0] < len(subject_2_tasks) - 1:
+                index = selected[0]
+                subject_2_tasks[index], subject_2_tasks[index + 1] = subject_2_tasks[index + 1], subject_2_tasks[index]
+                update_task_list(subject_2_task_list, subject_2_tasks)
+                subject_2_task_list.selection_set(index + 1)
+
+        def add_subject_2_task():
+            new_task = subject_2_selected_task.get()
+            if new_task not in subject_2_tasks:
+                subject_2_tasks.append(new_task)
+                update_task_list(subject_2_task_list, subject_2_tasks)
+
+        def delete_subject_2_task():
+            selected = subject_2_task_list.curselection()
+            if selected:
+                index = selected[0]
+                subject_2_tasks.pop(index)
+                update_task_list(subject_2_task_list, subject_2_tasks)
+
+        tk.OptionMenu(frame, subject_2_selected_task, *available_tasks).grid(row=6, column=1, pady=2, sticky="w")
+        tk.Button(frame, text="Add Task", command=add_subject_2_task).grid(row=7, column=1, pady=2)
+        tk.Button(frame, text="Delete Task", command=delete_subject_2_task).grid(row=8, column=1, pady=2)
+        tk.Button(frame, text="Move Up", command=move_subject_2_task_up).grid(row=9, column=1, pady=2)
+        tk.Button(frame, text="Move Down", command=move_subject_2_task_down).grid(row=10, column=1, pady=2)
+
+        def update_task_list(listbox, tasks):
+            listbox.delete(0, tk.END)
+            for task in tasks:
+                listbox.insert(tk.END, task)
+
         def save_changes():
             self.file_editor.set_subject_name(0, subject_1_name.get())
             self.file_editor.set_subject_name(1, subject_2_name.get())
             self.file_editor.set_subject_id(0, subject_1_id.get())
             self.file_editor.set_subject_id(1, subject_2_id.get())
+            self.file_editor.set_tasks_order(0, subject_1_tasks)
+            self.file_editor.set_tasks_order(1, subject_2_tasks)
             messagebox.showinfo("Success", "Global Parameters updated successfully!")
             window.destroy()
 
         tk.Button(frame, text="Save", command=save_changes).grid(columnspan=2, pady=10)
+
+
 
     def edit_task_parameters(self, task_name):
         if self.file_editor is None:
