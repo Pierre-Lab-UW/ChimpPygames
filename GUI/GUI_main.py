@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from FileEditor import FileEditor  # Import your FileEditor class
+import subprocess
+import os
 
 
 
@@ -18,7 +20,8 @@ class ParameterEditorApp:
             "Match_To_Sample": [],
             "Delayed_Match_To_Sample": ["dMTSsize","dMTStrials","dMTScriterion"],
             "Oddity_Testing": [],
-            "Delayed_Response_Task": []
+            "Delayed_Response_Task": [],
+            "SocialStimuli": []
         }
         
         # UI Elements
@@ -43,6 +46,26 @@ class ParameterEditorApp:
                                command=lambda t=task: self.edit_task_parameters(t))
             button.pack(fill="x", padx=5, pady=2)
             self.task_buttons[task] = button
+        
+        # Start Program Button
+        tk.Button(self.root, text="Start Program", command=self.start_program).pack(pady=10)
+    
+    def start_program(self):
+        try:
+            # Define the relative path to the program
+            program_path = os.path.join(os.path.dirname(__file__), "../ACTS_frontend.py")
+            
+            # Check if the file exists
+            if not os.path.exists(program_path):
+                messagebox.showerror("Error", "Program file not found!")
+                return
+            
+            # Start the program
+            subprocess.Popen(["python", program_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            messagebox.showinfo("Success", "Program started successfully!")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to start program: {e}")
+
 
     def load_file(self):
         file_path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
@@ -84,7 +107,7 @@ class ParameterEditorApp:
         # Task order section
         tk.Label(frame, text="Subject 1 Task Order").grid(row=4, column=0, pady=5, sticky="w")
         subject_1_task_list = tk.Listbox(frame, height=10, selectmode=tk.SINGLE, exportselection=False)
-        subject_1_tasks = self.file_editor.df.iloc[0]["Task Order"].split("-") if "Task Order" in self.file_editor.df.columns else list(self.tasks_params.keys())
+        subject_1_tasks = self.file_editor.df.iloc[0]["task-order"].split("-") if "task-order" in self.file_editor.df.columns else list(self.tasks_params.keys())
         for task in subject_1_tasks:
             subject_1_task_list.insert(tk.END, task)
         subject_1_task_list.grid(row=5, column=0, pady=2, sticky="w")
@@ -131,7 +154,7 @@ class ParameterEditorApp:
         # Similar controls for Subject 2
         tk.Label(frame, text="Subject 2 Task Order").grid(row=4, column=1, pady=5, sticky="w")
         subject_2_task_list = tk.Listbox(frame, height=10, selectmode=tk.SINGLE, exportselection=False)
-        subject_2_tasks = self.file_editor.df.iloc[1]["Task Order"].split("-") if "Task Order" in self.file_editor.df.columns else list(self.tasks_params.keys())
+        subject_2_tasks = self.file_editor.df.iloc[1]["task-order"].split("-") if "task-order" in self.file_editor.df.columns else list(self.tasks_params.keys())
         for task in subject_2_tasks:
             subject_2_task_list.insert(tk.END, task)
         subject_2_task_list.grid(row=5, column=1, pady=2, sticky="w")
