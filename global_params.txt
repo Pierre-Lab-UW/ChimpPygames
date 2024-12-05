@@ -3,7 +3,7 @@ screen width
 screen height
 384
 cursor visible :: True or False
-False
+TRUE
 restrict screen :: True or False
 False
 autoshaping :: True or False
