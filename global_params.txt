@@ -15,7 +15,7 @@ RGblind
 host connected :: True or False
 True
 RFID reader connected :: True or False
-False
+True
 DRO length (in seconds)
 3
 reward type (pellet or liquid)
