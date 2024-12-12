@@ -59,7 +59,7 @@ class SocialStimuli(object):
     def on_loop(self):
         if not self.playingGif:
             self.stimulus = pg.draw.circle(self.screen.bg, Color('green'),
-                                        (self.stim_x, self.stim_y), int(self.stim_size))
+                                        (int(self.stim_x), int(self.stim_y)), int(self.stim_size))
         else:        #self.current_video.draw_to(self.screen.bg, )
             if time.time() - self.timeStartedPlaying >= self.stimTime:
                 self.new_trial()

@@ -1,4 +1,4 @@
-monkeys = ["GROUP", "Testchip"]
+monkeys = ["GROUP", "TestChip"]
 
 for monkey in monkeys:
     filepath_to_task = "_progress/"+monkey+"/task-ix.txt"
