@@ -6,7 +6,7 @@ SocialStimuli
 ==
 
 """
-from pygamevideo import Video
+from moviepy.editor import *
 from _modules.pgtools import *
 import pygame as pg
 import time
@@ -36,7 +36,7 @@ class SocialStimuli(object):
         self.progressed = False 
 
         #custom parameters(these need to be loaded in)
-        self.trialAmt = 6
+        self.trialAmt = int(self.m_params[self.monkey_name]["SocialStimuli_trials"])
         self.stim_size = 100
         self.stimTime = 5 #seconds
         #tracking
@@ -60,9 +60,12 @@ class SocialStimuli(object):
         if not self.playingGif:
             self.stimulus = pg.draw.circle(self.screen.bg, Color('green'),
                                         (self.stim_x, self.stim_y), int(self.stim_size))
-        else:
+        else:        #self.current_video.draw_to(self.screen.bg, )
             if time.time() - self.timeStartedPlaying >= self.stimTime:
                 self.new_trial()
+
+            
+
 
     def on_touch(self, touch_x=None, touch_y=None):
         if self.playingGif:
@@ -78,11 +81,13 @@ class SocialStimuli(object):
             print("touched stimuli")
             self.screen.refresh("black")
             file = random.choice(os.listdir("_modules/_basicshapes"))
+
             if(file.endswith((".mp4", ".mov"))):
                 print("Playing video")
-                self.current_video = Video(file)
-                self.current_video.play()
+                self.current_video = VideoFileClip(os.path.join("_modules/_basicshapes", file))
                 self.playingGif = True
+                self.current_video.preview(fullscreen=True)
+                self.playingGif = False
             else:
                 image = pg.image.load(os.path.join("_modules/_basicshapes", file))
 
