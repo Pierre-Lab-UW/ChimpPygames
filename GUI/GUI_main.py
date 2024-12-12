@@ -12,6 +12,7 @@ class ParameterEditorApp:
         self.root.title("Parameter Editor")
         self.file_editor = None
         self.global_params = ["subject_1_name", "subject_2_name", "subject_1_id", "subject_2_id", "subject_1_task_order", "subject_2_task_order"]
+        #add all tasks parameters present in primate_params.csv here
         self.tasks_params = {
             "SHAPE0": [],
             "SHAPE1": ["SHAPE1_to_decrement", "SHAPE1trials", "SHAPE1criterion"],
@@ -88,6 +89,7 @@ class ParameterEditorApp:
             # Start the program
             subprocess.Popen(["python", program_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             messagebox.showinfo("Success", "Program started successfully!")
+            root.destroy()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start program: {e}")
 

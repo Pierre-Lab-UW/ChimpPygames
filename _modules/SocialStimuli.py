@@ -6,10 +6,13 @@ SocialStimuli
 ==
 
 """
+from pygamevideo import Video
 from _modules.pgtools import *
 import pygame as pg
 import time
 from pathlib import Path
+import cv2
+
 
 class SocialStimuli(object):
     def __init__(self, screen=None, monkey_name=None, g_params=None, m_params=None, arm_used=None, clipart=None):
@@ -39,7 +42,9 @@ class SocialStimuli(object):
         #tracking
         self.playingGif = False
         self.timeStartedPlaying  = 0
-
+        #video
+        self.current_video = None
+        self.current_frame = 0
     def new_trial(self):
         """
         Initiates a new trial
@@ -54,7 +59,7 @@ class SocialStimuli(object):
     def on_loop(self):
         if not self.playingGif:
             self.stimulus = pg.draw.circle(self.screen.bg, Color('green'),
-                                        (self.stim_x, self.stim_y), self.stim_size)
+                                        (self.stim_x, self.stim_y), int(self.stim_size))
         else:
             if time.time() - self.timeStartedPlaying >= self.stimTime:
                 self.new_trial()
@@ -72,15 +77,21 @@ class SocialStimuli(object):
         if distance_from_stimulus < correct_radius:
             print("touched stimuli")
             self.screen.refresh("black")
-            file = random.choice(os.listdir("_modules/_clipart"))
-            image = pg.image.load(os.path.join("_modules/_clipart", file))
+            file = random.choice(os.listdir("_modules/_basicshapes"))
+            if(file.endswith((".mp4", ".mov"))):
+                print("Playing video")
+                self.current_video = Video(file)
+                self.current_video.play()
+                self.playingGif = True
+            else:
+                image = pg.image.load(os.path.join("_modules/_basicshapes", file))
 
-            # pg.draw.circle(self.screen.bg, Color('red'),
-            #                             (self.stim_x, self.stim_y), self.stim_size)
-            self.screen.bg.blit(image, (self.stim_x, self.stim_y))
-            self.playingGif = True
-            #play the gif
-            self.timeStartedPlaying = time.time()
+                # pg.draw.circle(self.screen.bg, Color('red'),
+                #                             (self.stim_x, self.stim_y), self.stim_size)
+                self.screen.bg.blit(image, (self.stim_x/2, self.stim_y/2))
+                self.playingGif = True
+                #play the gif
+                self.timeStartedPlaying = time.time()
             #update progress on this trial
             with open(self.filepath_to_progress, 'a') as f:
                 f.writelines(str(1) + '\n')
