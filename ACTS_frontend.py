@@ -363,8 +363,9 @@ class FrontEnd(object):
         # GAMELOOP
         # #
         while not done:
-            program_on = self.decide_whether_program_is_on(overnight=self.g_params['DO_NOT_DISTURB'],
-                                                           overweekend=True)
+            #program_on = self.decide_whether_program_is_on(overnight=self.g_params['DO_NOT_DISTURB'],
+                                                           #overweekend=True)
+            program_on = True
             self.weekly_progress_reset()
                 
             # once daily, reload primate params when it becomes 3AM
@@ -437,6 +438,7 @@ class FrontEnd(object):
                 # every frame, see which tag is around and which monkey it belongs to
                 if self.g_params['RFID_READER_CONNECTED']:
                     tag = self.get_id()
+                    log('Tag is {}'.format(tag))
                     if tag is not None and tag != 'read_error':
                         try:
                             tag = str(int(tag))
