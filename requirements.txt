@@ -1,3 +1,4 @@
 pygame
 numpy
 pandas
+moviepy==1.0.3

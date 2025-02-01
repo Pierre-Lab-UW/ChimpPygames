@@ -22,7 +22,6 @@ class ParameterEditorApp:
             "Delayed_Match_To_Sample": ["dMTSsize","dMTStrials","dMTScriterion"],
             "Oddity_Testing": [],
             "Delayed_Response_Task": [],
-            "SocialStimuli": ["SocialStimuli_trials"]
         }
         
         # UI Elements
