@@ -161,9 +161,7 @@ def pellet(time_to_close_relay=1.25, channel=17):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(channel, GPIO.OUT)
         GPIO.output(channel, GPIO.LOW)
-
         time.sleep(time_to_close_relay)
-
         GPIO.output(channel, GPIO.HIGH)
         GPIO.cleanup()
     except:

@@ -438,7 +438,6 @@ class FrontEnd(object):
                 # every frame, see which tag is around and which monkey it belongs to
                 if self.g_params['RFID_READER_CONNECTED']:
                     tag = self.get_id()
-                    log('Tag is {}'.format(tag))
                     if tag is not None and tag != 'read_error':
                         try:
                             tag = str(int(tag))
@@ -596,6 +595,7 @@ class FrontEnd(object):
                                         else:
                                             if reward_tracker[active_monkey] <= int(self.m_params[active_monkey]['Daily Reward Cap2']):
                                                 channel = 17
+                                                log('channel set to {}'.formt(channel))
                                             else:
                                                 channel = 27
                                             log('used channel {}'.format(channel))
@@ -622,7 +622,7 @@ class FrontEnd(object):
                                 sounds['correct'].play()
                                 for i in range(int(self.g_params['REWARD_AMOUNT'])):
                                     if self.g_params['REWARD_TYPE'] != 'pellet':
-                                        pellet(time_to_close_relay=1.25, channel=17)    # liquid reward
+                                        pellet(time_to_close_relay=2.5, channel=17)    # liquid reward
                                     else:
                                         pellet()                            # solid reward
 
