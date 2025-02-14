@@ -8,7 +8,7 @@ GPIO.setwarnings(False)
 GPIO.setup(channel, GPIO.OUT)
 
 def motor_on(pin):        
-        GPIO.output(pin, GPIO.HIGH) #turn motor on
+`        GPIO.output(pin, GPIO.HIGH) #turn motor on
         
 def motor_off(pin):
         GPIO.output(pin, GPIO.LOW) #turn motor off
