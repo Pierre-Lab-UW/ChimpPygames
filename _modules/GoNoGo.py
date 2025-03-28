@@ -37,9 +37,9 @@ class GoNoGo(object):
         self.progressed = False
 
         #params for go nogo
-        self.ratio = 0.7#ratio of go tasks to no go tasks
+        self.ratio = 0.7 #ratio of go tasks to no go tasks
         self.sides_num = 4
-        self.go_time = 10#time for go trial to expire in seconds
+        self.go_time = 10 #time for go trial to expire in seconds
         self.width = 50
 
         #state variables for go-nogo

@@ -7,7 +7,7 @@ TRUE
 restrict screen :: True or False
 False
 autoshaping :: True or False
-True
+False
 time until monkey can be rewarded for tag read, if able (in minutes)
 10
 color stimuli (normal or RGblind)
@@ -15,7 +15,7 @@ RGblind
 host connected :: True or False
 True
 RFID reader connected :: True or False
-True
+False
 DRO length (in seconds)
 3
 reward type (pellet or liquid)

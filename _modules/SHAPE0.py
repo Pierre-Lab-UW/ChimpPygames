@@ -1,4 +1,4 @@
-"""
+f"""
 SHAPE0
 ==
 +  what it looks like :: solid-color square onscreen

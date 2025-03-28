@@ -89,6 +89,7 @@ class Screen(object):
         else:
             self.fg = pg.display.set_mode(size)
 
+
     def refresh(self, color=None):
         self.bg.fill(Color(color))
         self.fg.blit(self.bg, (0, 0))

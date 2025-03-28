@@ -3,7 +3,7 @@ from tkinter import filedialog, messagebox
 from FileEditor import FileEditor  # Import your FileEditor class
 import subprocess
 import os
-
+import shlex
 
 
 class ParameterEditorApp:
@@ -11,23 +11,25 @@ class ParameterEditorApp:
         self.root = root
         self.root.title("Parameter Editor")
         self.file_editor = None
-        self.global_params = ["subject_1_name", "subject_2_name", "subject_1_id", "subject_2_id", "subject_1_task_order", "subject_2_task_order"]
-        #add all tasks parameters present in primate_params.csv here
+        self.global_params = ["subject_1_name", "subject_2_name", "subject_1_id", "subject_2_id",
+                              "subject_1_task_order", "subject_2_task_order"]
+        # add all tasks parameters present in primate_params.csv here
         self.tasks_params = {
             "SHAPE0": [],
             "SHAPE1": ["SHAPE1_to_decrement", "SHAPE1trials", "SHAPE1criterion"],
             "SHAPE2": ["SHAPE2size", "SHAPE2_zones", "SHAPE2trials", "SHAPE2criterion"],
-            "Two_Choice_Discrimination": ["2choicesize","2choicereset","2choiceproblems","2choicetrials","2choicecorrect"],
+            "Two_Choice_Discrimination": ["2choicesize", "2choicereset", "2choiceproblems", "2choicetrials",
+                                          "2choicecorrect"],
             "Match_To_Sample": [],
-            "Delayed_Match_To_Sample": ["dMTSsize","dMTStrials","dMTScriterion"],
+            "Delayed_Match_To_Sample": ["dMTSsize", "dMTStrials", "dMTScriterion"],
             "Oddity_Testing": [],
             "Delayed_Response_Task": [],
+            "GO_NO_GO": ["subj_name", "GNG_Ratio", "NG_delay", "abort_trial_time", "treats_dispensed"]
         }
-        
+
         # UI Elements
         self.create_scrollable_frame()
 
-    
     def create_scrollable_frame(self):
         # Create a canvas and scrollbar
         canvas = tk.Canvas(self.root)
@@ -50,7 +52,6 @@ class ParameterEditorApp:
         self.scrollable_frame = scrollable_frame
         self.setup_ui()
 
-
     def setup_ui(self):
         # Load CSV file button
         tk.Button(self.scrollable_frame, text="Load Parameter File", command=self.load_file).pack(pady=10)
@@ -66,7 +67,7 @@ class ParameterEditorApp:
 
         self.task_buttons = {}
         for task in self.tasks_params:
-            button = tk.Button(self.tasks_frame, text=f"Edit {task} Parameters", 
+            button = tk.Button(self.tasks_frame, text=f"Edit {task} Parameters",
                                command=lambda t=task: self.edit_task_parameters(t))
             button.pack(fill="x", padx=5, pady=2)
             self.task_buttons[task] = button
@@ -74,24 +75,23 @@ class ParameterEditorApp:
         # Start Program Button
         tk.Button(self.scrollable_frame, text="Start Program", command=self.start_program).pack(pady=10)
 
-    
     def start_program(self):
         try:
             # Define the relative path to the program
-            program_path = os.path.join(os.path.dirname(__file__), "../ACTS_frontend.py")
-            
+            current_directory = os.getcwd()
+            program_path = os.path.join(current_directory, "../ACTS_frontend.py")
+
             # Check if the file exists
             if not os.path.exists(program_path):
                 messagebox.showerror("Error", "Program file not found!")
                 return
-            
+
             # Start the program
             subprocess.Popen(["python", program_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             messagebox.showinfo("Success", "Program started successfully!")
             root.destroy()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start program: {e}")
-
 
     def load_file(self):
         file_path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
@@ -134,7 +134,8 @@ class ParameterEditorApp:
         # Task order section for Subject 1
         tk.Label(frame, text="Subject 1 Task Order").grid(row=4, column=0, pady=5, sticky="w")
         subject_1_task_list = tk.Listbox(frame, height=5, selectmode=tk.SINGLE, exportselection=False)
-        subject_1_tasks = self.file_editor.df.iloc[0]["task-order"].split("-") if "task-order" in self.file_editor.df.columns else list(self.tasks_params.keys())
+        subject_1_tasks = self.file_editor.df.iloc[0]["task-order"].split(
+            "-") if "task-order" in self.file_editor.df.columns else list(self.tasks_params.keys())
         for task in subject_1_tasks:
             subject_1_task_list.insert(tk.END, task)
         subject_1_task_list.grid(row=5, column=0, pady=2, sticky="ew")
@@ -181,7 +182,8 @@ class ParameterEditorApp:
         # Task order section for Subject 2
         tk.Label(frame, text="Subject 2 Task Order").grid(row=4, column=1, pady=5, sticky="w")
         subject_2_task_list = tk.Listbox(frame, height=5, selectmode=tk.SINGLE, exportselection=False)
-        subject_2_tasks = self.file_editor.df.iloc[1]["task-order"].split("-") if "task-order" in self.file_editor.df.columns else list(self.tasks_params.keys())
+        subject_2_tasks = self.file_editor.df.iloc[1]["task-order"].split(
+            "-") if "task-order" in self.file_editor.df.columns else list(self.tasks_params.keys())
         for task in subject_2_tasks:
             subject_2_task_list.insert(tk.END, task)
         subject_2_task_list.grid(row=5, column=1, pady=2, sticky="ew")
@@ -202,7 +204,7 @@ class ParameterEditorApp:
                 index = selected[0]
                 subject_2_tasks[index], subject_2_tasks[index + 1] = subject_2_tasks[index + 1], subject_2_tasks[index]
                 update_task_list(subject_2_task_list, subject_2_tasks)
-                subject_2_task_list.selection_set(index + 1)
+                subject_2_task_list.selection_set(aindex + 1)
 
         def add_subject_2_task():
             new_task = subject_2_selected_task.get()
@@ -240,8 +242,6 @@ class ParameterEditorApp:
 
         tk.Button(frame, text="Save", command=save_changes).grid(columnspan=2, pady=10)
 
-
-
     def edit_task_parameters(self, task_name):
         if self.file_editor is None:
             messagebox.showwarning("Warning", "Load a parameter file first!")
@@ -257,18 +257,27 @@ class ParameterEditorApp:
         subject_1_params = {}
         subject_2_params = {}
         for i, param in enumerate(self.tasks_params[task_name]):
+
             if True:
                 tk.Label(frame, text=f"{param} (Subject 1)").grid(row=i, column=0, sticky="w", padx=5, pady=2)
+
                 value_1 = tk.StringVar(value=self.file_editor.df.iloc[0][param])
                 entry_1 = tk.Entry(frame, textvariable=value_1)
                 entry_1.grid(row=i, column=1, padx=5, pady=2)
                 subject_1_params[param] = value_1
 
-                tk.Label(frame, text=f"{param} (Subject 2)").grid(row=i, column=2, sticky="w", padx=5, pady=2)
-                value_2 = tk.StringVar(value=self.file_editor.df.iloc[1][param] if len(self.file_editor.df) > 1 else "")
-                entry_2 = tk.Entry(frame, textvariable=value_2)
-                entry_2.grid(row=i, column=3, padx=5, pady=2)
-                subject_2_params[param] = value_2
+                if task_name != 'GO_NO_GO':
+                    print(task_name)
+
+                    tk.Label(frame, text=f"{param} (Subject 2)").grid(row=i, column=2, sticky="w", padx=5, pady=2)
+                    value_2 = tk.StringVar(
+                        value=self.file_editor.df.iloc[1][param] if len(self.file_editor.df) > 1 else "")
+                    entry_2 = tk.Entry(frame, textvariable=value_2)
+                    entry_2.grid(row=i, column=3, padx=5, pady=2)
+                    subject_2_params[param] = value_2
+
+                else:
+                    print('not editing these parameters for subject 2')
 
         def save_changes():
             for param, var in subject_1_params.items():
@@ -279,6 +288,7 @@ class ParameterEditorApp:
             window.destroy()
 
         tk.Button(frame, text="Save", command=save_changes).grid(columnspan=4, pady=10)
+
 
 # Run the application
 if __name__ == "__main__":
