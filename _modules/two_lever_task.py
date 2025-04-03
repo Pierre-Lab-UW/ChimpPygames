@@ -44,33 +44,6 @@ class two_lever_task(object):
 
 
 
-def new_trial():
-
-    #trial light on
-
-
-
-
-
-
-    # lever light on
-
-
-
-
-
-def on_loop(self):
-
-
-
-
-def choose_lever(self):
-
-    if self.mode
-
-def measure_time(self):
-
-    # measure time
 
 
 
