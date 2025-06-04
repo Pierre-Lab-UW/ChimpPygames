@@ -52,8 +52,7 @@ class ParameterEditorApp:
         # Configure the scrollable area
         scrollable_frame.bind(
             "<Configure>",
-            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
-        )
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
         
         # Center the scrollable frame
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
@@ -116,14 +115,20 @@ class ParameterEditorApp:
         # Start Program Button - centered with padding
         start_btn = tk.Button(content_frame, text="Start Program", 
                              command=self.start_program, width=20, pady=5)
-        start_btn.grid(row=4, column=0, pady=20, sticky="ew")
+        start_btn.grid(row=6, column=0, pady=20, sticky="ew")
+
+        # Reset Progress Button
+        reset_btn = tk.Button(content_frame, text="Reset Progress", 
+                     command=self.reset_progress, width=20, pady=5)
+        reset_btn.grid(row=4, column=0, padx=5, sticky="ew")
+
 
     def start_program(self):
         try:
             # Define the relative path to the program
             current_directory = os.getcwd()
             program_path = os.path.join(current_directory, "ACTS_frontend.py")
-            print(program_path)
+
             # Check if the file exists
             if not os.path.exists(program_path):
                 messagebox.showerror("Error", "Program file not found!")
@@ -154,21 +159,37 @@ class ParameterEditorApp:
         window = tk.Toplevel(self.root)
         window.title("Edit Global Parameters")
         window.grid_columnconfigure(0, weight=1)
-        window.minsize(500, 600)
+        window.minsize(500, 400)
 
-        # Create a main frame for centering
-        main_frame = tk.Frame(window, padx=20, pady=20)
+        # Create main container frame with scrollbar
+        main_frame = tk.Frame(window)
         main_frame.grid(row=0, column=0, sticky="nsew")
+        main_frame.grid_rowconfigure(0, weight=1)
         main_frame.grid_columnconfigure(0, weight=1)
 
-        # Inputs for global parameters
-        subject_1_name = tk.StringVar(value=self.file_editor.df.iloc[0]["Subject"])
-        subject_2_name = tk.StringVar(value=self.file_editor.df.iloc[1]["Subject"])
-        subject_1_id = tk.StringVar(value=self.file_editor.df.iloc[0]["Left Wrist"])
-        subject_2_id = tk.StringVar(value=self.file_editor.df.iloc[1]["Left Wrist"])
+        # Create canvas and scrollbar
+        canvas = tk.Canvas(main_frame, highlightthickness=0)
+        scrollbar = tk.Scrollbar(main_frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = tk.Frame(canvas)
 
-        # Create a centered frame for content
-        content_frame = tk.Frame(main_frame)
+        # Configure the scrollable area
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+        
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.grid(row=0, column=0, sticky="nsew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+
+        # Configure weights for resizing
+        main_frame.grid_rowconfigure(0, weight=1)
+        main_frame.grid_columnconfigure(0, weight=1)
+
+        # Add padding to the scrollable frame
+        content_frame = tk.Frame(scrollable_frame, padx=20, pady=20)
         content_frame.grid(row=0, column=0, sticky="nsew")
         content_frame.grid_columnconfigure(0, weight=1)
         content_frame.grid_columnconfigure(1, weight=1)
@@ -176,6 +197,12 @@ class ParameterEditorApp:
         # Title label
         title_label = tk.Label(content_frame, text="Edit Global Parameters", font=("Arial", 14, "bold"))
         title_label.grid(row=0, column=0, columnspan=2, pady=(0, 20))
+
+        # Inputs for global parameters
+        subject_1_name = tk.StringVar(value=self.file_editor.df.iloc[0]["Subject"])
+        subject_2_name = tk.StringVar(value=self.file_editor.df.iloc[1]["Subject"])
+        subject_1_id = tk.StringVar(value=self.file_editor.df.iloc[0]["Left Wrist"])
+        subject_2_id = tk.StringVar(value=self.file_editor.df.iloc[1]["Left Wrist"])
 
         # Labels and entries for names and IDs
         tk.Label(content_frame, text="Subject 1 Name", font=("Arial", 10)).grid(row=1, column=0, pady=5, sticky="w")
@@ -382,6 +409,28 @@ class ParameterEditorApp:
         save_btn = tk.Button(frame, text="Save Changes", command=save_changes, 
                            padx=10, pady=5, font=("Arial", 10, "bold"))
         save_btn.grid(row=len(self.tasks_params[task_name])+2, column=0, columnspan=4, pady=20, sticky="ew")
+
+    def reset_progress(self):
+        try:
+            # Define the path to the reset script
+            current_directory = os.getcwd()
+            script_path = os.path.join(current_directory, "reset_progress.py")
+
+            # Check if the file exists
+            if not os.path.exists(script_path):
+                messagebox.showerror("Error", "reset_progress.py not found in current directory!")
+                return
+
+            # Run the reset script
+            result = subprocess.run(["python", script_path], capture_output=True, text=True)
+            
+            if result.returncode == 0:
+                messagebox.showinfo("Success", "Progress reset successfully!")
+            else:
+                messagebox.showerror("Error", f"Failed to reset progress:\n{result.stderr}")
+                
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to run reset script: {e}")
 
 
 # Run the application
