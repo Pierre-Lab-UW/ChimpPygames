@@ -34,8 +34,7 @@ def is_raspberrypi():
         return False
     return False
 
-if not is_raspberrypi():
-    from color_based_detection import *
+from color_based_detection import *
 
 class FrontEnd(object):
     """
