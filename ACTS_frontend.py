@@ -23,8 +23,19 @@ To add in a new program
 import subprocess
 from _modules.pgtools import *
 import _modules as modules
+import io
+import os
 
-from color_based_detection import *
+def is_raspberrypi():
+    try:
+        with io.open('/sys/firmware/devicetree/base/model', 'r') as m:
+            if 'raspberry pi' in m.read().lower(): return True
+    except Exception: 
+        return False
+    return False
+
+if not is_raspberrypi():
+    from color_based_detection import *
 
 class FrontEnd(object):
     """
@@ -163,7 +174,7 @@ class FrontEnd(object):
                 pg.display.update()
                 time.sleep(.3)
             #Error: Correct sound unable to be loaded
-            sounds['correct'].play()
+            #sounds['correct'].play()
             #pellet()
             return True
         return False
@@ -425,10 +436,12 @@ class FrontEnd(object):
                 # #
                 autoshaped = self.autoshape(time_since_autoshape=time_since_autoshape, today=today, week=week, correct_color=CORRECT_COLOR)
                 if autoshaped:
+                    print("reseting experiment")
                     if not self.g_params['RFID_READER_CONNECTED']:
                         tag = 999999999999999
                     active_monkey = False
                     monkey_name = None
+                    experiment = None
                     time_since_reset = pg.time.get_ticks()
                     time_since_autoshape = pg.time.get_ticks()
                     status = 'running'

@@ -18,22 +18,35 @@ class ParameterEditorApp:
             "SHAPE0": [],
             "SHAPE1": ["SHAPE1_to_decrement", "SHAPE1trials", "SHAPE1criterion"],
             "SHAPE2": ["SHAPE2size", "SHAPE2_zones", "SHAPE2trials", "SHAPE2criterion"],
-            "Two_Choice_Discrimination": ["2choicesize", "2choicereset", "2choiceproblems", "2choicetrials",
+            "TwoChoice": ["2choicesize", "2choicereset", "2choiceproblems", "2choicetrials",
                                           "2choicecorrect"],
-            "Match_To_Sample": [],
-            "Delayed_Match_To_Sample": ["dMTSsize", "dMTStrials", "dMTScriterion"],
-            "Oddity_Testing": [],
-            "Delayed_Response_Task": [],
-            "GO_NO_GO": ["subj_name", "GNG_Ratio", "NG_delay", "abort_trial_time", "treats_dispensed"]
+           # "Match_To_Sample": [],
+           # "Delayed_Match_To_Sample": ["dMTSsize", "dMTStrials", "dMTScriterion"],
+           # "Oddity_Testing": [],
+           # "Delayed_Response_Task": [],
+           # "GO_NO_GO": ["subj_name", "GNG_Ratio", "NG_delay", "abort_trial_time", "treats_dispensed"]
         }
 
+        # Configure root window to expand properly
+        self.root.grid_rowconfigure(0, weight=1)
+        self.root.grid_columnconfigure(0, weight=1)
+        
+        # Set minimum window size
+        self.root.minsize(400, 500)
+        
         # UI Elements
         self.create_scrollable_frame()
 
     def create_scrollable_frame(self):
+        # Create main container frame
+        main_frame = tk.Frame(self.root, padx=20, pady=20)
+        main_frame.grid(row=0, column=0, sticky="nsew")
+        main_frame.grid_rowconfigure(0, weight=1)
+        main_frame.grid_columnconfigure(0, weight=1)
+
         # Create a canvas and scrollbar
-        canvas = tk.Canvas(self.root)
-        scrollbar = tk.Scrollbar(self.root, orient="vertical", command=canvas.yview)
+        canvas = tk.Canvas(main_frame, highlightthickness=0)
+        scrollbar = tk.Scrollbar(main_frame, orient="vertical", command=canvas.yview)
         scrollable_frame = tk.Frame(canvas)
 
         # Configure the scrollable area
@@ -41,46 +54,76 @@ class ParameterEditorApp:
             "<Configure>",
             lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
         )
-
+        
+        # Center the scrollable frame
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
 
-        canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
+        # Pack canvas and scrollbar
+        canvas.grid(row=0, column=0, sticky="nsew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        
+        # Configure weights for resizing
+        main_frame.grid_rowconfigure(0, weight=1)
+        main_frame.grid_columnconfigure(0, weight=1)
 
         # Store the scrollable frame
         self.scrollable_frame = scrollable_frame
         self.setup_ui()
 
     def setup_ui(self):
-        # Load CSV file button
-        tk.Button(self.scrollable_frame, text="Load Parameter File", command=self.load_file).pack(pady=10)
+        # Configure the scrollable frame to center its contents
+        self.scrollable_frame.grid_columnconfigure(0, weight=1)
+        
+        # Create a container frame for centered content
+        content_frame = tk.Frame(self.scrollable_frame, padx=20, pady=20)
+        content_frame.grid(row=0, column=0, sticky="nsew")
+        content_frame.grid_columnconfigure(0, weight=1)
+        
+        # Title label
+        title_label = tk.Label(content_frame, text="Parameter Editor", font=("Arial", 16, "bold"))
+        title_label.grid(row=0, column=0, pady=(0, 20), sticky="n")
+        
+        # Load CSV file button - centered with padding
+        load_btn = tk.Button(content_frame, text="Load Parameter File", 
+                           command=self.load_file, width=20, padx=10, pady=5)
+        load_btn.grid(row=1, column=0, pady=10, sticky="ew")
+        
+        # Global Parameters Section - centered with styling
+        self.global_frame = tk.LabelFrame(content_frame, text="Global Parameters", 
+                                         padx=10, pady=10, font=("Arial", 10, "bold"))
+        self.global_frame.grid(row=2, column=0, pady=10, sticky="ew")
+        self.global_frame.grid_columnconfigure(0, weight=1)
+        
+        global_btn = tk.Button(self.global_frame, text="Edit Global Parameters", 
+                              command=self.edit_global_parameters, width=20, pady=5)
+        global_btn.grid(row=0, column=0, pady=5, padx=10, sticky="ew")
 
-        # Global Parameters Section
-        self.global_frame = tk.LabelFrame(self.scrollable_frame, text="Global Parameters")
-        self.global_frame.pack(fill="x", padx=10, pady=5)
-        tk.Button(self.global_frame, text="Edit Global Parameters", command=self.edit_global_parameters).pack()
-
-        # Task Buttons
-        self.tasks_frame = tk.LabelFrame(self.scrollable_frame, text="Task Parameters")
-        self.tasks_frame.pack(fill="x", padx=10, pady=5)
+        # Task Buttons - centered with consistent styling
+        self.tasks_frame = tk.LabelFrame(content_frame, text="Task Parameters", 
+                                       padx=10, pady=10, font=("Arial", 10, "bold"))
+        self.tasks_frame.grid(row=3, column=0, pady=10, sticky="ew")
+        self.tasks_frame.grid_columnconfigure(0, weight=1)
 
         self.task_buttons = {}
-        for task in self.tasks_params:
+        for i, task in enumerate(self.tasks_params):
             button = tk.Button(self.tasks_frame, text=f"Edit {task} Parameters",
-                               command=lambda t=task: self.edit_task_parameters(t))
-            button.pack(fill="x", padx=5, pady=2)
+                             command=lambda t=task: self.edit_task_parameters(t),
+                             width=20, pady=3)
+            button.grid(row=i, column=0, pady=3, padx=10, sticky="ew")
             self.task_buttons[task] = button
 
-        # Start Program Button
-        tk.Button(self.scrollable_frame, text="Start Program", command=self.start_program).pack(pady=10)
+        # Start Program Button - centered with padding
+        start_btn = tk.Button(content_frame, text="Start Program", 
+                             command=self.start_program, width=20, pady=5)
+        start_btn.grid(row=4, column=0, pady=20, sticky="ew")
 
     def start_program(self):
         try:
             # Define the relative path to the program
             current_directory = os.getcwd()
-            program_path = os.path.join(current_directory, "../ACTS_frontend.py")
-
+            program_path = os.path.join(current_directory, "ACTS_frontend.py")
+            print(program_path)
             # Check if the file exists
             if not os.path.exists(program_path):
                 messagebox.showerror("Error", "Program file not found!")
@@ -89,7 +132,7 @@ class ParameterEditorApp:
             # Start the program
             subprocess.Popen(["python", program_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             messagebox.showinfo("Success", "Program started successfully!")
-            root.destroy()
+            self.root.destroy()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start program: {e}")
 
@@ -110,9 +153,13 @@ class ParameterEditorApp:
 
         window = tk.Toplevel(self.root)
         window.title("Edit Global Parameters")
+        window.grid_columnconfigure(0, weight=1)
+        window.minsize(500, 600)
 
-        frame = tk.Frame(window)
-        frame.pack(fill="both", expand=True, padx=5, pady=5)
+        # Create a main frame for centering
+        main_frame = tk.Frame(window, padx=20, pady=20)
+        main_frame.grid(row=0, column=0, sticky="nsew")
+        main_frame.grid_columnconfigure(0, weight=1)
 
         # Inputs for global parameters
         subject_1_name = tk.StringVar(value=self.file_editor.df.iloc[0]["Subject"])
@@ -120,25 +167,35 @@ class ParameterEditorApp:
         subject_1_id = tk.StringVar(value=self.file_editor.df.iloc[0]["Left Wrist"])
         subject_2_id = tk.StringVar(value=self.file_editor.df.iloc[1]["Left Wrist"])
 
-        # Labels and entries for names and IDs
-        tk.Label(frame, text="Subject 1 Name").grid(row=0, column=0, pady=2, sticky="w")
-        tk.Entry(frame, textvariable=subject_1_name).grid(row=0, column=1, pady=2, sticky="ew")
-        tk.Label(frame, text="Subject 2 Name").grid(row=1, column=0, pady=2, sticky="w")
-        tk.Entry(frame, textvariable=subject_2_name).grid(row=1, column=1, pady=2, sticky="ew")
+        # Create a centered frame for content
+        content_frame = tk.Frame(main_frame)
+        content_frame.grid(row=0, column=0, sticky="nsew")
+        content_frame.grid_columnconfigure(0, weight=1)
+        content_frame.grid_columnconfigure(1, weight=1)
 
-        tk.Label(frame, text="Subject 1 ID").grid(row=2, column=0, pady=2, sticky="w")
-        tk.Entry(frame, textvariable=subject_1_id).grid(row=2, column=1, pady=2, sticky="ew")
-        tk.Label(frame, text="Subject 2 ID").grid(row=3, column=0, pady=2, sticky="w")
-        tk.Entry(frame, textvariable=subject_2_id).grid(row=3, column=1, pady=2, sticky="ew")
+        # Title label
+        title_label = tk.Label(content_frame, text="Edit Global Parameters", font=("Arial", 14, "bold"))
+        title_label.grid(row=0, column=0, columnspan=2, pady=(0, 20))
+
+        # Labels and entries for names and IDs
+        tk.Label(content_frame, text="Subject 1 Name", font=("Arial", 10)).grid(row=1, column=0, pady=5, sticky="w")
+        tk.Entry(content_frame, textvariable=subject_1_name, font=("Arial", 10)).grid(row=1, column=1, pady=5, sticky="ew")
+        tk.Label(content_frame, text="Subject 2 Name", font=("Arial", 10)).grid(row=2, column=0, pady=5, sticky="w")
+        tk.Entry(content_frame, textvariable=subject_2_name, font=("Arial", 10)).grid(row=2, column=1, pady=5, sticky="ew")
+
+        tk.Label(content_frame, text="Subject 1 ID", font=("Arial", 10)).grid(row=3, column=0, pady=5, sticky="w")
+        tk.Entry(content_frame, textvariable=subject_1_id, font=("Arial", 10)).grid(row=3, column=1, pady=5, sticky="ew")
+        tk.Label(content_frame, text="Subject 2 ID", font=("Arial", 10)).grid(row=4, column=0, pady=5, sticky="w")
+        tk.Entry(content_frame, textvariable=subject_2_id, font=("Arial", 10)).grid(row=4, column=1, pady=5, sticky="ew")
 
         # Task order section for Subject 1
-        tk.Label(frame, text="Subject 1 Task Order").grid(row=4, column=0, pady=5, sticky="w")
-        subject_1_task_list = tk.Listbox(frame, height=5, selectmode=tk.SINGLE, exportselection=False)
+        tk.Label(content_frame, text="Subject 1 Task Order", font=("Arial", 10, "bold")).grid(row=5, column=0, pady=10, sticky="w", columnspan=2)
+        subject_1_task_list = tk.Listbox(content_frame, height=5, selectmode=tk.SINGLE, exportselection=False, font=("Arial", 10))
         subject_1_tasks = self.file_editor.df.iloc[0]["task-order"].split(
             "-") if "task-order" in self.file_editor.df.columns else list(self.tasks_params.keys())
         for task in subject_1_tasks:
             subject_1_task_list.insert(tk.END, task)
-        subject_1_task_list.grid(row=5, column=0, pady=2, sticky="ew")
+        subject_1_task_list.grid(row=6, column=0, pady=5, sticky="ew", columnspan=2)
 
         # Dropdown menu for available tasks for Subject 1
         available_tasks = list(self.tasks_params.keys())
@@ -173,20 +230,31 @@ class ParameterEditorApp:
                 subject_1_tasks.pop(index)
                 update_task_list(subject_1_task_list, subject_1_tasks)
 
-        tk.OptionMenu(frame, subject_1_selected_task, *available_tasks).grid(row=6, column=0, pady=2, sticky="ew")
-        tk.Button(frame, text="Add Task", command=add_subject_1_task).grid(row=7, column=0, pady=2, sticky="ew")
-        tk.Button(frame, text="Delete Task", command=delete_subject_1_task).grid(row=8, column=0, pady=2, sticky="ew")
-        tk.Button(frame, text="Move Up", command=move_subject_1_task_up).grid(row=9, column=0, pady=2, sticky="ew")
-        tk.Button(frame, text="Move Down", command=move_subject_1_task_down).grid(row=10, column=0, pady=2, sticky="ew")
+        task_menu = tk.OptionMenu(content_frame, subject_1_selected_task, *available_tasks)
+        task_menu.config(font=("Arial", 10))
+        task_menu.grid(row=7, column=0, pady=5, sticky="ew", columnspan=2)
+
+        # Button frame for Subject 1 tasks
+        btn_frame = tk.Frame(content_frame)
+        btn_frame.grid(row=8, column=0, columnspan=2, pady=5, sticky="ew")
+        btn_frame.grid_columnconfigure(0, weight=1)
+        btn_frame.grid_columnconfigure(1, weight=1)
+        btn_frame.grid_columnconfigure(2, weight=1)
+        btn_frame.grid_columnconfigure(3, weight=1)
+
+        tk.Button(btn_frame, text="Add Task", command=add_subject_1_task, padx=5).grid(row=0, column=0, padx=2, sticky="ew")
+        tk.Button(btn_frame, text="Delete Task", command=delete_subject_1_task, padx=5).grid(row=0, column=1, padx=2, sticky="ew")
+        tk.Button(btn_frame, text="Move Up", command=move_subject_1_task_up, padx=5).grid(row=0, column=2, padx=2, sticky="ew")
+        tk.Button(btn_frame, text="Move Down", command=move_subject_1_task_down, padx=5).grid(row=0, column=3, padx=2, sticky="ew")
 
         # Task order section for Subject 2
-        tk.Label(frame, text="Subject 2 Task Order").grid(row=4, column=1, pady=5, sticky="w")
-        subject_2_task_list = tk.Listbox(frame, height=5, selectmode=tk.SINGLE, exportselection=False)
+        tk.Label(content_frame, text="Subject 2 Task Order", font=("Arial", 10, "bold")).grid(row=9, column=0, pady=10, sticky="w", columnspan=2)
+        subject_2_task_list = tk.Listbox(content_frame, height=5, selectmode=tk.SINGLE, exportselection=False, font=("Arial", 10))
         subject_2_tasks = self.file_editor.df.iloc[1]["task-order"].split(
             "-") if "task-order" in self.file_editor.df.columns else list(self.tasks_params.keys())
         for task in subject_2_tasks:
             subject_2_task_list.insert(tk.END, task)
-        subject_2_task_list.grid(row=5, column=1, pady=2, sticky="ew")
+        subject_2_task_list.grid(row=10, column=0, pady=5, sticky="ew", columnspan=2)
 
         subject_2_selected_task = tk.StringVar(value=available_tasks[0])
 
@@ -204,7 +272,7 @@ class ParameterEditorApp:
                 index = selected[0]
                 subject_2_tasks[index], subject_2_tasks[index + 1] = subject_2_tasks[index + 1], subject_2_tasks[index]
                 update_task_list(subject_2_task_list, subject_2_tasks)
-                subject_2_task_list.selection_set(aindex + 1)
+                subject_2_task_list.selection_set(index + 1)
 
         def add_subject_2_task():
             new_task = subject_2_selected_task.get()
@@ -219,11 +287,22 @@ class ParameterEditorApp:
                 subject_2_tasks.pop(index)
                 update_task_list(subject_2_task_list, subject_2_tasks)
 
-        tk.OptionMenu(frame, subject_2_selected_task, *available_tasks).grid(row=6, column=1, pady=2, sticky="ew")
-        tk.Button(frame, text="Add Task", command=add_subject_2_task).grid(row=7, column=1, pady=2, sticky="ew")
-        tk.Button(frame, text="Delete Task", command=delete_subject_2_task).grid(row=8, column=1, pady=2, sticky="ew")
-        tk.Button(frame, text="Move Up", command=move_subject_2_task_up).grid(row=9, column=1, pady=2, sticky="ew")
-        tk.Button(frame, text="Move Down", command=move_subject_2_task_down).grid(row=10, column=1, pady=2, sticky="ew")
+        task_menu2 = tk.OptionMenu(content_frame, subject_2_selected_task, *available_tasks)
+        task_menu2.config(font=("Arial", 10))
+        task_menu2.grid(row=11, column=0, pady=5, sticky="ew", columnspan=2)
+
+        # Button frame for Subject 2 tasks
+        btn_frame2 = tk.Frame(content_frame)
+        btn_frame2.grid(row=12, column=0, columnspan=2, pady=5, sticky="ew")
+        btn_frame2.grid_columnconfigure(0, weight=1)
+        btn_frame2.grid_columnconfigure(1, weight=1)
+        btn_frame2.grid_columnconfigure(2, weight=1)
+        btn_frame2.grid_columnconfigure(3, weight=1)
+
+        tk.Button(btn_frame2, text="Add Task", command=add_subject_2_task, padx=5).grid(row=0, column=0, padx=2, sticky="ew")
+        tk.Button(btn_frame2, text="Delete Task", command=delete_subject_2_task, padx=5).grid(row=0, column=1, padx=2, sticky="ew")
+        tk.Button(btn_frame2, text="Move Up", command=move_subject_2_task_up, padx=5).grid(row=0, column=2, padx=2, sticky="ew")
+        tk.Button(btn_frame2, text="Move Down", command=move_subject_2_task_down, padx=5).grid(row=0, column=3, padx=2, sticky="ew")
 
         def update_task_list(listbox, tasks):
             listbox.delete(0, tk.END)
@@ -240,7 +319,10 @@ class ParameterEditorApp:
             messagebox.showinfo("Success", "Global Parameters updated successfully!")
             window.destroy()
 
-        tk.Button(frame, text="Save", command=save_changes).grid(columnspan=2, pady=10)
+        # Save button centered below both columns
+        save_btn = tk.Button(content_frame, text="Save Changes", command=save_changes, 
+                           padx=10, pady=5, font=("Arial", 10, "bold"))
+        save_btn.grid(row=13, column=0, columnspan=2, pady=20, sticky="ew")
 
     def edit_task_parameters(self, task_name):
         if self.file_editor is None:
@@ -249,35 +331,44 @@ class ParameterEditorApp:
 
         window = tk.Toplevel(self.root)
         window.title(f"Edit {task_name} Parameters")
+        window.grid_columnconfigure(0, weight=1)
+        window.minsize(500, 400)
 
-        frame = tk.Frame(window)
-        frame.pack(fill="both", expand=True, padx=10, pady=10)
+        # Create main frame for centering
+        main_frame = tk.Frame(window, padx=20, pady=20)
+        main_frame.grid(row=0, column=0, sticky="nsew")
+        main_frame.grid_columnconfigure(0, weight=1)
+
+        # Create content frame
+        frame = tk.Frame(main_frame)
+        frame.grid(row=0, column=0, sticky="nsew")
+        frame.grid_columnconfigure(0, weight=1)
+        frame.grid_columnconfigure(1, weight=1)
+        frame.grid_columnconfigure(2, weight=1)
+        frame.grid_columnconfigure(3, weight=1)
+
+        # Title label
+        title_label = tk.Label(frame, text=f"Edit {task_name} Parameters", font=("Arial", 14, "bold"))
+        title_label.grid(row=0, column=0, columnspan=4, pady=(0, 20))
 
         # Inputs for task parameters for Subject 1 and 2
         subject_1_params = {}
         subject_2_params = {}
         for i, param in enumerate(self.tasks_params[task_name]):
+            tk.Label(frame, text=f"{param} (Subject 1)", font=("Arial", 10)).grid(row=i+1, column=0, sticky="w", padx=5, pady=5)
 
-            if True:
-                tk.Label(frame, text=f"{param} (Subject 1)").grid(row=i, column=0, sticky="w", padx=5, pady=2)
+            value_1 = tk.StringVar(value=self.file_editor.df.iloc[0][param])
+            entry_1 = tk.Entry(frame, textvariable=value_1, font=("Arial", 10))
+            entry_1.grid(row=i+1, column=1, padx=5, pady=5, sticky="ew")
+            subject_1_params[param] = value_1
 
-                value_1 = tk.StringVar(value=self.file_editor.df.iloc[0][param])
-                entry_1 = tk.Entry(frame, textvariable=value_1)
-                entry_1.grid(row=i, column=1, padx=5, pady=2)
-                subject_1_params[param] = value_1
-
-                if task_name != 'GO_NO_GO':
-                    print(task_name)
-
-                    tk.Label(frame, text=f"{param} (Subject 2)").grid(row=i, column=2, sticky="w", padx=5, pady=2)
-                    value_2 = tk.StringVar(
-                        value=self.file_editor.df.iloc[1][param] if len(self.file_editor.df) > 1 else "")
-                    entry_2 = tk.Entry(frame, textvariable=value_2)
-                    entry_2.grid(row=i, column=3, padx=5, pady=2)
-                    subject_2_params[param] = value_2
-
-                else:
-                    print('not editing these parameters for subject 2')
+            if task_name != 'GO_NO_GO':
+                tk.Label(frame, text=f"{param} (Subject 2)", font=("Arial", 10)).grid(row=i+1, column=2, sticky="w", padx=5, pady=5)
+                value_2 = tk.StringVar(
+                    value=self.file_editor.df.iloc[1][param] if len(self.file_editor.df) > 1 else "")
+                entry_2 = tk.Entry(frame, textvariable=value_2, font=("Arial", 10))
+                entry_2.grid(row=i+1, column=3, padx=5, pady=5, sticky="ew")
+                subject_2_params[param] = value_2
 
         def save_changes():
             for param, var in subject_1_params.items():
@@ -287,7 +378,10 @@ class ParameterEditorApp:
             messagebox.showinfo("Success", f"{task_name} Parameters updated successfully!")
             window.destroy()
 
-        tk.Button(frame, text="Save", command=save_changes).grid(columnspan=4, pady=10)
+        # Save button centered below all columns
+        save_btn = tk.Button(frame, text="Save Changes", command=save_changes, 
+                           padx=10, pady=5, font=("Arial", 10, "bold"))
+        save_btn.grid(row=len(self.tasks_params[task_name])+2, column=0, columnspan=4, pady=20, sticky="ew")
 
 
 # Run the application
