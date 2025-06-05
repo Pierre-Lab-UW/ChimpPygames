@@ -163,7 +163,7 @@ class FrontEnd(object):
         needs_shaping = pg.time.get_ticks() - time_to_autoshape > time_since_autoshape
         after_8am = int(time.strftime('%H')) >= 8
         before_4pm = int(time.strftime('%H')) < 16
-        if needs_shaping and after_8am and before_4pm:
+        if needs_shaping:
             log("Autoshaping now...")
             autoshape_datafile = os.path.join(HOSTROOT, '_data', 'autoshaping_' + system_name + '_week' + week + '.csv')
             write_ln(autoshape_datafile, [today, time.strftime('%H:%M:%S')])
