@@ -65,10 +65,8 @@ class SHAPE0(object):
             log(self.filepath_to_size)
             log(line)
             log(self.stim_size)
-            self.stim_size = int(line.replace('\n', '').replace('\r', ''))
-        (self.stim_x, self.stim_y) = (int((self.g_params['SCREEN_W'] - self.stim_size) / 2),
-                                      int((self.g_params['SCREEN_H'] - self.stim_size) / 2))
-
+            self.stim_size = 800
+            self.stim_x, self.stim_y = (0,0)
         # to test touch zones
         #pg.draw.circle(screen.fg, Color('chartreuse'), (int(self.stim_x+self.stim_size/2), int(self.stim_y+self.stim_size/2)), int((self.stim_size / 2) + (.30*self.stim_size)), 10)
         #pg.draw.circle(screen.fg, Color('chartreuse'), (int(self.stim_x+self.stim_size/2), int(self.stim_y+self.stim_size/2)), int((self.stim_size / 2) + (.45*self.stim_size)), 10)
@@ -105,8 +103,7 @@ class SHAPE0(object):
             if self.stim_size > 200 and sum(decrement_progress) == int(self.m_params[self.monkey_name]['SHAPE1_to_decrement']):
                 self.stim_size -= self.lengthDecrease
             '''
-            with open(self.filepath_to_size, 'w') as f:
-                f.write(str(self.stim_size))
+        
             return 'ITI'
         # if mediocre touch
         # #

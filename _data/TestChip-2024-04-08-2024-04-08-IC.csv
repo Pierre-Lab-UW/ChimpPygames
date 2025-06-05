@@ -1,3 +1,0 @@
-monkey_name,date,time,arm,task_name,trial,sample_image,correct_x,correct_y,correct_loc,set_type,touch_x,touch_y,timestamp,choice_latency,test_trial,correct
-TestChip,2024-04-08,14:40:48,None,IC,1,grey___image209.jpg,127,311,bottomleft,6,133,343,1238,1238,False,1
-TestChip,2024-04-08,14:40:55,None,IC,2,grey___image209.jpg,127,311,bottomleft,6,145,329,737,737,False,1

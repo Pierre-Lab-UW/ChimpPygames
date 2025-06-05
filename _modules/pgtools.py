@@ -85,7 +85,7 @@ class Screen(object):
         self.color = color
         self.bg.fill(self.color)
         if fullscreen:
-            self.fg = pg.display.set_mode(size, (NOFRAME and FULLSCREEN))
+            self.fg = pg.display.set_mode(size, (NOFRAME | FULLSCREEN))
         else:
             self.fg = pg.display.set_mode(size)
 

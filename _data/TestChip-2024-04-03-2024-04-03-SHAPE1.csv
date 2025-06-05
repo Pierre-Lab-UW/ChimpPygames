@@ -1,8 +1,0 @@
-monkey_name,date,time,arm,task_name,trial,stim_size,touch_x,touch_y,stim_x,stim_y,correct
-TestChip,2024-04-03,11:04:44,None,SHAPE1,1,250,123,120,3,-26,1
-TestChip,2024-04-03,11:06:34,None,SHAPE1,1,240,115,140,8,-21,1
-TestChip,2024-04-03,11:07:59,None,SHAPE1,1,230,98,94,13,-16,1
-TestChip,2024-04-03,11:08:06,None,SHAPE1,2,220,114,167,18,-11,1
-TestChip,2024-04-03,11:08:12,None,SHAPE1,3,210,23,322,23,-6,0
-TestChip,2024-04-03,11:10:18,None,SHAPE1,1,210,244,214,151,87,1
-TestChip,2024-04-03,11:10:25,None,SHAPE1,2,210,185,244,151,87,1

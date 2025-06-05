@@ -1,7 +1,7 @@
 screen width
-512
+800
 screen height
-384
+480
 cursor visible :: True or False
 TRUE
 restrict screen :: True or False
@@ -15,7 +15,7 @@ RGblind
 host connected :: True or False
 True
 RFID reader connected :: True or False
-False
+True
 DRO length (in seconds)
 3
 reward type (pellet or liquid)

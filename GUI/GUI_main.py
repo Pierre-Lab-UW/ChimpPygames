@@ -128,15 +128,16 @@ class ParameterEditorApp:
             # Define the relative path to the program
             current_directory = os.getcwd()
             program_path = os.path.join(current_directory, "ACTS_frontend.py")
-
+            print(program_path)
             # Check if the file exists
             if not os.path.exists(program_path):
                 messagebox.showerror("Error", "Program file not found!")
                 return
 
             # Start the program
-            subprocess.Popen(["python", program_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            messagebox.showinfo("Success", "Program started successfully!")
+            #subprocess.Popen([program_path], shell = True)
+            #messagebox.showinfo("Success", "Program started successfully!")
+            subprocess.run(["python3", program_path])
             self.root.destroy()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start program: {e}")

@@ -750,6 +750,7 @@ class FrontEnd(object):
 
                         if monkey_name is not None:
                             self.screen.fg.blit(sm_font.render(monkey_name, False, Color('salmon')), (5, 25))
+                            pass
                         else:
                             self.screen.fg.blit(sm_font.render('RFID ERROR: {}'.format(tag), False, Color('salmon')), (5, 25))
                     else:
