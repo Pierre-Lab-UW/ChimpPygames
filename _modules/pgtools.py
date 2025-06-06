@@ -152,7 +152,7 @@ def check_quit(event=None):
         raise SystemExit
 
 
-def pellet(time_to_close_relay=1.25, channel=17):
+def pellet(time_to_close_relay=0.2, channel=17):
     """
     Dispense pellets.
 
