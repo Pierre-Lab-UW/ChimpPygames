@@ -169,8 +169,6 @@ class FrontEnd(object):
             #Error: Param not being loaded: Original val was 60*60*1000c
             time_to_autoshape = 10 * 1000   # if system_name isn't in a_params
         needs_shaping = pg.time.get_ticks() - time_to_autoshape > time_since_autoshape
-        after_8am = int(time.strftime('%H')) >= 8
-        before_4pm = int(time.strftime('%H')) < 16
         if needs_shaping:
             log("Autoshaping now...")
             autoshape_datafile = os.path.join(HOSTROOT, '_data', 'autoshaping_' + system_name + '_week' + week + '.csv')
@@ -216,26 +214,6 @@ class FrontEnd(object):
         else:
             self.screen.bg.fill(sq_color)
             self.screen.fg.blit(self.screen.bg, (0, 0))
-
-    def decide_whether_program_is_on(self, overnight=None, overweekend=None):
-        
-        current_day = time.strftime('%A')
-        current_hr = int(time.strftime('%H'))
-        if overnight:
-            # "Do Not Disturb" mode - for SQM overnight
-            after_7am = current_hr >= 7
-            before_7pm = current_hr < 19
-            if not (after_7am and before_7pm):
-                return False
-        if overweekend:
-            # turn off for rhesus weekends
-            if current_day in ['Saturday', 'Sunday']:
-                return False
-            elif current_day == 'Friday' and current_hr >= 19:
-                return False
-            elif current_day == 'Monday' and current_hr < 7:
-                return False
-        return True
 
     def weekly_progress_reset(self):
         """
@@ -381,8 +359,6 @@ class FrontEnd(object):
         # GAMELOOP
         # #
         while not done:
-            #program_on = self.decide_whether_program_is_on(overnight=self.g_params['DO_NOT_DISTURB'],
-                                                           #overweekend=True)
             program_on = True
             self.weekly_progress_reset()
                 
