@@ -83,6 +83,14 @@ class FrontEnd(object):
         except:
             log('system name [{}] not in autoshaping.csv'.format(system_name))   # log error if not
 
+        folder_path = "_data"
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+            print(f"Folder created: {folder_path}")
+        else:
+            print(f"Folder already exists: {folder_path}")
+
+
         self.device = None
         self.screen = Screen(fullscreen=True,
                              size=(self.g_params['SCREEN_W'], self.g_params['SCREEN_H']),
