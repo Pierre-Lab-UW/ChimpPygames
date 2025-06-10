@@ -4,3 +4,7 @@ errorlogs/
 global_params.txt
 primate_params.csv
 *.pyc
+*.pyc
+__pycache_/*.pyc
+_modules/__pycache__/__init__.cpython-312.pyc
+/_modules/__pycache__
