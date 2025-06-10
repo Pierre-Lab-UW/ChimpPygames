@@ -1,9 +1,13 @@
+import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from FileEditor import FileEditor  # Import your FileEditor class
 import subprocess
 import os
 import shlex
+import serial
+import serial.tools.list_ports
+from threading import Thread
 
 
 class ParameterEditorApp:
@@ -36,6 +40,59 @@ class ParameterEditorApp:
         
         # UI Elements
         self.create_scrollable_frame()
+
+
+    def rfid_test(self):
+        """Open a window to display RFID data from serial port"""
+        rfid_window = tk.Toplevel(self.root)
+        rfid_window.title("RFID Test")
+        rfid_window.geometry("400x300")
+        
+        # Text widget to display serial data
+        text_widget = tk.Text(rfid_window, wrap=tk.WORD)
+        text_widget.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
+        
+        # Stop button
+        stop_button = tk.Button(rfid_window, text="Stop", 
+                            command=lambda: self.stop_serial_reading.set())
+        stop_button.pack(pady=5)
+        
+        # Flag to control the serial reading thread
+        self.stop_serial_reading = threading.Event()
+        
+        def read_from_serial():
+            """Thread function to read from serial port"""
+            try:
+                # Try to find the RFID reader (adjust as needed for your hardware)
+                rfid_port = "/dev/serial0"
+                    
+                ser = serial.Serial(rfid_port, baudrate=9600, timeout=1)
+                text_widget.insert(tk.END, f"Connected to {rfid_port}\n")
+                
+                while not self.stop_serial_reading.is_set():
+                    if ser.in_waiting:
+                        data = ser.readline().decode('utf-8').strip()
+                        if data:
+                            text_widget.insert(tk.END, f"RFID: {data}\n")
+                            text_widget.see(tk.END)
+                
+                ser.close()
+                text_widget.insert(tk.END, "Disconnected\n")
+                
+            except Exception as e:
+                text_widget.insert(tk.END, f"Error: {str(e)}\n")
+        
+        # Start the serial reading thread
+        serial_thread = Thread(target=read_from_serial, daemon=True)
+        serial_thread.start()
+        
+        # Clean up when window closes
+        def on_closing():
+            self.stop_serial_reading.set()
+            rfid_window.destroy()
+        
+        rfid_window.protocol("WM_DELETE_WINDOW", on_closing)
+
 
     def create_scrollable_frame(self):
         # Create main container frame
@@ -121,6 +178,13 @@ class ParameterEditorApp:
         reset_btn = tk.Button(content_frame, text="Reset Progress", 
                      command=self.reset_progress, width=20, pady=5)
         reset_btn.grid(row=4, column=0, padx=5, sticky="ew")
+
+        # RFID Test Button
+        rfid_btn = tk.Button(content_frame, text="RFID Test", 
+                            command=self.rfid_test, width=20, pady=5)
+        rfid_btn.grid(row=5, column=0, padx=5, pady=10, sticky="ew")
+
+
 
 
     def start_program(self):
