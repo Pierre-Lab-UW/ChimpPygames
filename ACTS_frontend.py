@@ -598,7 +598,7 @@ class FrontEnd(object):
                                 
                                 for i in range(int(self.g_params['REWARD_AMOUNT'])):
                                     if self.g_params['REWARD_TYPE'] != 'pellet':
-                                        pellet(time_to_close_relay=1.25, channel=channel)    # liquid reward
+                                        pellet(time_to_close_relay=0.2, channel=channel)    # liquid reward
                                     else:
                                         pellet()                            # solid reward
 
