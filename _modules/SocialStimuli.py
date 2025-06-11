@@ -45,7 +45,7 @@ class SocialStimuli(object):
         #video
         self.current_video = None
         self.current_frame = 0
-    
+
     def new_trial(self):
         """
         Initiates a new trial
@@ -54,23 +54,17 @@ class SocialStimuli(object):
         if self.current_video:
             self.current_video.close()
             self.current_video = None
-
         self.trial += 1
         self.playingGif = False
         self.screen.refresh("black")
 
-        
-
-        
     def on_loop(self):
         if not self.playingGif:
             self.stimulus = pg.draw.circle(self.screen.bg, Color('green'),
-                                        (int(self.stim_x), int(self.stim_y)), int(self.stim_size))
+                                        (int(self.g_params['SCREEN_W']/2), int(self.g_params['SCREEN_H']/2)), int(self.stim_size))
         else:        #self.current_video.draw_to(self.screen.bg, )
             if time.time() - self.timeStartedPlaying >= self.stimTime:
                 self.new_trial()
-
-            
 
 
     def on_touch(self, touch_x=None, touch_y=None):
@@ -87,7 +81,6 @@ class SocialStimuli(object):
             print("touched stimuli")
             self.screen.refresh("black")
             file = "marm.mp4"
-
             if(file.endswith((".mp4", ".mov"))):
                 print("Playing video")
                 self.current_video = VideoFileClip(os.path.join("_modules/_basicshapes", file))
