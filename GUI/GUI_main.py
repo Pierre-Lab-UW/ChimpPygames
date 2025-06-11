@@ -24,7 +24,7 @@ class ParameterEditorApp:
             "SHAPE2": ["SHAPE2size", "SHAPE2_zones", "SHAPE2trials", "SHAPE2criterion"],
             "TwoChoice": ["2choicesize", "2choicereset", "2choiceproblems", "2choicetrials",
                                           "2choicecorrect"],
-            "SocialStimuli": []
+            "SocialStimuli": ["SocialStimuli_trials"]
            # "Match_To_Sample": [],
            # "Delayed_Match_To_Sample": ["dMTSsize", "dMTStrials", "dMTScriterion"],
            # "Oddity_Testing": [],

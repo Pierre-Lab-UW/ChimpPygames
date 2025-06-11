@@ -466,7 +466,7 @@ class FrontEnd(object):
                         arm_used = 'NA'
                         break
                     if self.mutable_text in ['p17', 'p27']:
-                        pellet(time_to_close_relay=20, channel=int(self.mutable_text[-2:]))
+                        pellet(time_to_close_relay=0.2, channel=int(self.mutable_text[-2:]))
                         self.mutable_text = self.debug_text = ''
 
                 # start a program...

@@ -45,14 +45,20 @@ class SocialStimuli(object):
         #video
         self.current_video = None
         self.current_frame = 0
+    
     def new_trial(self):
         """
         Initiates a new trial
         """
         #how long should circle be shown before failed trial?
+        if self.current_video:
+            self.current_video.close()
+            self.current_video = None
+
         self.trial += 1
         self.playingGif = False
         self.screen.refresh("black")
+
         
 
         
@@ -80,7 +86,7 @@ class SocialStimuli(object):
         if distance_from_stimulus < correct_radius:
             print("touched stimuli")
             self.screen.refresh("black")
-            file = random.choice(os.listdir("_modules/_basicshapes"))
+            file = "marm.mp4"
 
             if(file.endswith((".mp4", ".mov"))):
                 print("Playing video")
