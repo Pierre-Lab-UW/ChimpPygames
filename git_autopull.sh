@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Directory to check for
-TARGET_DIR="/home/pi/myproject"  # <-- Change this to your directory
+TARGET_DIR="/home/pi/Desktop/ChimpPygames"  # <-- Change this to your directory
 
 # Log file for debugging (optional)
 LOGFILE="/home/pi/git_autopull.log"
