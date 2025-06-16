@@ -34,6 +34,7 @@ def is_raspberrypi():
         return False
     return False
 
+print("Is pi:"+str(is_raspberrypi()))
 if not is_raspberrypi():
     from color_based_detection import *
 
