@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # --- Configuration ---
-TARGET_DIR="/home/pi/myproject"       # Change this to your repo directory
-LOGFILE="/home/pi/git_autopull.log"   # Log file
+TARGET_DIR="/home/pi/Desktop/ChimpPygames"       # Change this to your repo directory
+LOGFILE="/home/pi/Desktop"   # Log file
 PING_HOST="8.8.8.8"                   # A stable host to ping
 MAX_WAIT_TIME=120                     # Max seconds to wait for network
 WAIT_INTERVAL=5                       # Seconds between pings
