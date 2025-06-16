@@ -34,7 +34,8 @@ def is_raspberrypi():
         return False
     return False
 
-from color_based_detection import *
+if not is_raspberrypi():
+    from color_based_detection import *
 
 class FrontEnd(object):
     """
@@ -452,7 +453,7 @@ class FrontEnd(object):
                                 break
                     elif tag == 'read_error':
                         status = 'read_error'
-                else:
+                elif not is_raspberrypi():
                     monkey_name = state_color.max_color
                     self.screen.fg.blit(sm_font.render(monkey_name, True, Color('white')), (256, 115))
                     #log("Color: "+str(state_color.max_color))
