@@ -16,4 +16,4 @@ if [ -d "$TARGET_DIR" ]; then
 else
     echo "$(date): Directory $TARGET_DIR not found" >> "$LOGFILE"
 fi
-#this is a test commit 2
+#this is a test commit 3
