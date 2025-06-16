@@ -39,6 +39,32 @@ class FileEditor:
         #all task params are integers except one
         self.df.iloc[subject_number, self.df.columns.get_loc(task_param)] = task_param_value
         self.save_csv()
+    
+    def set_subject_id(self, subject_number: int, subject_id: str):
+        if subject_number > 2 or subject_number < 0:
+            raise Exception("Subject number not valid!")
+        self.df.iloc[subject_number, self.df.columns.get_loc("Left Wrist")] = subject_id
+        self.save_csv()
+
+    def set_subject_sex(self, subject_number: int, sex: str):
+        if subject_number > 2 or subject_number < 0:
+            raise Exception("Subject number not valid!")
+        self.df.iloc[subject_number, self.df.columns.get_loc("Sex")] = sex
+        self.save_csv()
+
+    def set_subject_internal_name(self, subject_number: int, internal_name: str):
+        if subject_number > 2 or subject_number < 0:
+            raise Exception("Subject number not valid!")
+        self.df.iloc[subject_number, self.df.columns.get_loc("subj_name")] = internal_name
+        self.save_csv()
+    
+    def set_subject_dob(self, subject_number, dob: str):
+        if subject_number > 2 or subject_number < 0:
+            raise Exception("Subject number not valid!")
+        self.df.iloc[subject_number, self.df.columns.get_loc("DOB")] = dob
+        self.save_csv()
+
+
 
     def save_csv(self):
         self.df.to_csv(self.path_to_csv, index=False, na_rep="NA")
