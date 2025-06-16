@@ -32,3 +32,5 @@ if [ -d "$TARGET_DIR" ]; then
 else
     echo "$(date): Directory $TARGET_DIR not found!" >> "$LOGFILE"
 fi
+
+#test commit comment
