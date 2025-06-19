@@ -8,6 +8,12 @@ import shlex
 import serial
 import serial.tools.list_ports
 from threading import Thread
+try:
+    # checks if you have access to RPi.GPIO, which is available inside RPi
+    import RPi.GPIO as GPIO
+except:
+    # In case of exception, you are executing your script outside of RPi, so import Mock.GPIO
+    import Mock.GPIO as GPIO
 
 
 class ParameterEditorApp:
@@ -30,6 +36,9 @@ class ParameterEditorApp:
            # "Delayed_Response_Task": [],
            # "GO_NO_GO": ["subj_name", "GNG_Ratio", "NG_delay", "abort_trial_time", "treats_dispensed"]
         }
+
+        self.pump_status = False
+        self.status_bar = None
 
         # Configure root window to expand properly
         self.root.grid_rowconfigure(0, weight=1)
@@ -176,11 +185,44 @@ class ParameterEditorApp:
                             command=self.rfid_test, style='Secondary.TButton')
         rfid_btn.grid(row=2, column=0, pady=5, sticky="ew")
 
+        pump_btn = ttk.Button(system_frame, text="Toggle Pump", 
+                            command=self.toggle_pump, style='Secondary.TButton')
+        pump_btn.grid(row=3, column=0, pady=5, sticky="ew")
+
         # Status bar at the bottom
         self.status_var = tk.StringVar()
-        self.status_var.set("Ready")
-        status_bar = ttk.Label(content_frame, textvariable=self.status_var, relief=tk.SUNKEN, anchor=tk.W)
-        status_bar.grid(row=5, column=0, pady=(20, 0), sticky="ew")
+        self.status_var.set(self.pad_to_warning_length_centered("Ready"))
+        self.status_bar = ttk.Label(content_frame, textvariable=self.status_var, relief=tk.SUNKEN, anchor=tk.W)
+        self.status_bar.grid(row=5, column=0, pady=(20, 0), sticky="ew")
+
+    def toggle_pump(self, channel = 17):
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(channel, GPIO.OUT)
+        
+        if not self.pump_status:
+            self.pump_status = True
+            GPIO.output(channel, GPIO.LOW)
+            self.status_var.set("Warning: Primate Pump is on. Please do not stop the program at this time!")
+        else:
+            self.pump_status = False
+            GPIO.output(channel, GPIO.HIGH)
+            self.status_var.set(self.pad_to_warning_length_centered("Ready"))
+
+    def pad_to_warning_length_centered(self, text: str) -> str:
+        TARGET_LENGTH = 128
+        current_length = len(text)
+        
+        if current_length >= TARGET_LENGTH:
+            return text[:TARGET_LENGTH]  # Truncate if too long
+        
+        total_padding = TARGET_LENGTH - current_length
+        left_padding = total_padding // 2
+        right_padding = total_padding - left_padding
+        
+        return " " * left_padding + text + " " * right_padding
+
+
+
 
 
     def rfid_test(self):
@@ -259,7 +301,11 @@ class ParameterEditorApp:
 
     def start_program(self):
         try:
-            self.status_var.set("Starting ACTS program...")
+            if self.pump_status == True:
+                messagebox.showerror(self.pad_to_warning_length_centered("Error", "Can't start program with Primate Pump on!"))
+                return
+
+            self.status_var.set(self.pad_to_warning_length_centered("Starting ACTS program..."))
             self.root.update()
             
             # Define the relative path to the program
@@ -269,7 +315,7 @@ class ParameterEditorApp:
             # Check if the file exists
             if not os.path.exists(program_path):
                 messagebox.showerror("Error", "ACTS program file not found!")
-                self.status_var.set("Error: Program file not found")
+                self.status_var.set(self.pad_to_warning_length_centered("Error: Program file not found!"))
                 return
 
             # Start the program
@@ -277,7 +323,7 @@ class ParameterEditorApp:
             self.root.destroy()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to start program: {e}")
-            self.status_var.set(f"Error: {str(e)}")
+            self.status_var.set(self.pad_to_warning_length_centered(f"Error: {str(e)}"))
 
     def load_file(self):
         file_path = filedialog.askopenfilename(
@@ -291,54 +337,47 @@ class ParameterEditorApp:
         try:
             self.file_editor = FileEditor(file_path)
             messagebox.showinfo("Success", "Parameter file loaded successfully!")
-            self.status_var.set(f"Loaded: {os.path.basename(file_path)}")
+            self.status_var.set(self.pad_to_warning_length_centered(f"Loaded: {os.path.basename(file_path)}"))
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load file: {e}")
-            self.status_var.set(f"Error loading file: {str(e)}")
+            self.status_var.set(self.pad_to_warning_length_centered(f"Error loading file: {str(e)}"))
 
     def edit_global_parameters(self):
         if self.file_editor is None:
-            messagebox.showwarning("Warning", "Please load a parameter file first!")
-            self.status_var.set("Warning: No parameter file loaded")
+            messagebox.showwarning("Warning", "Load a parameter file first!")
             return
 
         window = tk.Toplevel(self.root)
         window.title("Edit Global Parameters")
-        window.geometry("800x700")
         window.grid_columnconfigure(0, weight=1)
-        window.grid_rowconfigure(0, weight=1)
+        window.minsize(500, 400)
 
-        # Main container frame
-        main_frame = ttk.Frame(window, padding="10 10 10 10")
+        main_frame = tk.Frame(window)
         main_frame.grid(row=0, column=0, sticky="nsew")
         main_frame.grid_rowconfigure(0, weight=1)
         main_frame.grid_columnconfigure(0, weight=1)
 
-        # Create a canvas and scrollbar
-        canvas = tk.Canvas(main_frame, highlightthickness=0, bg='#f0f0f0')
-        scrollbar = ttk.Scrollbar(main_frame, orient="vertical", command=canvas.yview)
-        scrollable_frame = ttk.Frame(canvas)
+        canvas = tk.Canvas(main_frame, highlightthickness=0)
+        scrollbar = tk.Scrollbar(main_frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = tk.Frame(canvas)
 
-        # Configure the scrollable area
         scrollable_frame.bind(
             "<Configure>",
-            lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-        
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
 
         canvas.grid(row=0, column=0, sticky="nsew")
         scrollbar.grid(row=0, column=1, sticky="ns")
 
-        # Content frame with padding
-        content_frame = ttk.Frame(scrollable_frame, padding="20 20 20 20")
+        content_frame = tk.Frame(scrollable_frame, padx=20, pady=20)
         content_frame.grid(row=0, column=0, sticky="nsew")
         content_frame.grid_columnconfigure(0, weight=1)
         content_frame.grid_columnconfigure(1, weight=1)
 
-        # Title
-        ttk.Label(content_frame, text="Edit Global Parameters", style='Title.TLabel').grid(
-            row=0, column=0, columnspan=2, pady=(0, 20))
+        tk.Label(content_frame, text="Edit Global Parameters", font=("Arial", 14, "bold")).grid(row=0, column=0, columnspan=2, pady=(0, 20))
 
         # Load values from CSV
         def get_val(row, col):
@@ -360,88 +399,40 @@ class ParameterEditorApp:
         subject_2_dob = tk.StringVar(value=get_val(1, "DOB"))
         subject_2_room = tk.StringVar(value=get_val(1, "Room"))
 
-        def create_labeled_entry(parent, label_text, var, row, column=0):
-            """Helper function to create labeled entry widgets"""
-            ttk.Label(parent, text=label_text).grid(row=row, column=column, pady=5, sticky="w")
-            entry = ttk.Entry(parent, textvariable=var)
-            entry.grid(row=row, column=column+1, pady=5, sticky="ew", padx=(0, 10))
-            return entry
+        def add_entry(label, var, row, label_text):
+            tk.Label(content_frame, text=label_text, font=("Arial", 10)).grid(row=row, column=0, pady=5, sticky="w")
+            tk.Entry(content_frame, textvariable=var, font=("Arial", 10)).grid(row=row, column=1, pady=5, sticky="ew")
 
-        # Subject 1 frame
-        subject_1_frame = ttk.LabelFrame(content_frame, text="Subject 1 Details", padding="10 10 10 10")
-        subject_1_frame.grid(row=1, column=0, pady=10, sticky="nsew", padx=5)
-        subject_1_frame.grid_columnconfigure(1, weight=1)
-
-        row = 0
-        create_labeled_entry(subject_1_frame, "Name:", subject_1_name, row)
-        row += 1
-        create_labeled_entry(subject_1_frame, "ID:", subject_1_id, row)
-        row += 1
-        create_labeled_entry(subject_1_frame, "Sex:", subject_1_sex, row)
-        row += 1
-        create_labeled_entry(subject_1_frame, "Internal Name:", subject_1_internal_name, row)
-        row += 1
-        create_labeled_entry(subject_1_frame, "Date of Birth:", subject_1_dob, row)
-        row += 1
-        create_labeled_entry(subject_1_frame, "Room:", subject_1_room, row)
-
-        # Subject 2 frame
-        subject_2_frame = ttk.LabelFrame(content_frame, text="Subject 2 Details", padding="10 10 10 10")
-        subject_2_frame.grid(row=1, column=1, pady=10, sticky="nsew", padx=5)
-        subject_2_frame.grid_columnconfigure(1, weight=1)
-
-        row = 0
-        create_labeled_entry(subject_2_frame, "Name:", subject_2_name, row)
-        row += 1
-        create_labeled_entry(subject_2_frame, "ID:", subject_2_id, row)
-        row += 1
-        create_labeled_entry(subject_2_frame, "Sex:", subject_2_sex, row)
-        row += 1
-        create_labeled_entry(subject_2_frame, "Internal Name:", subject_2_internal_name, row)
-        row += 1
-        create_labeled_entry(subject_2_frame, "Date of Birth:", subject_2_dob, row)
-        row += 1
-        create_labeled_entry(subject_2_frame, "Room:", subject_2_room, row)
+        row = 1
+        for label, var in [
+            ("Subject 1 Name", subject_1_name),
+            ("Subject 2 Name", subject_2_name),
+            ("Subject 1 ID", subject_1_id),
+            ("Subject 2 ID", subject_2_id),
+            ("Subject 1 Sex", subject_1_sex),
+            ("Subject 2 Sex", subject_2_sex),
+            ("Subject 1 Internal Name", subject_1_internal_name),
+            ("Subject 2 Internal Name", subject_2_internal_name),
+            ("Subject 1 DOB", subject_1_dob),
+            ("Subject 2 DOB", subject_2_dob),
+            ("Subject 1 Room", subject_1_room),
+            ("Subject 2 Room", subject_2_room),
+        ]:
+            add_entry(label, var, row, label)
+            row += 1
 
         # Task management
-        task_management_frame = ttk.Frame(content_frame)
-        task_management_frame.grid(row=2, column=0, columnspan=2, pady=10, sticky="ew")
-        task_management_frame.grid_columnconfigure(0, weight=1)
-        task_management_frame.grid_columnconfigure(1, weight=1)
-
-        # Subject 1 Task Order
-        subject_1_task_frame = ttk.LabelFrame(task_management_frame, text="Subject 1 Task Order", padding="10 10 10 10")
-        subject_1_task_frame.grid(row=0, column=0, padx=5, sticky="nsew")
-        subject_1_task_frame.grid_columnconfigure(0, weight=1)
-
-        subject_1_task_list = tk.Listbox(subject_1_task_frame, height=5, selectmode=tk.SINGLE, 
-                                       exportselection=False, font=('Helvetica', 10))
+        tk.Label(content_frame, text="Subject 1 Task Order", font=("Arial", 10, "bold")).grid(row=row, column=0, pady=10, sticky="w", columnspan=2)
+        subject_1_task_list = tk.Listbox(content_frame, height=5, selectmode=tk.SINGLE, exportselection=False, font=("Arial", 10))
         subject_1_tasks = get_val(0, "task-order").split("-") if "task-order" in self.file_editor.df.columns else list(self.tasks_params.keys())
         for task in subject_1_tasks:
             subject_1_task_list.insert(tk.END, task)
-        subject_1_task_list.grid(row=0, column=0, columnspan=2, sticky="ew")
-
-        # Subject 2 Task Order
-        subject_2_task_frame = ttk.LabelFrame(task_management_frame, text="Subject 2 Task Order", padding="10 10 10 10")
-        subject_2_task_frame.grid(row=0, column=1, padx=5, sticky="nsew")
-        subject_2_task_frame.grid_columnconfigure(0, weight=1)
-
-        subject_2_task_list = tk.Listbox(subject_2_task_frame, height=5, selectmode=tk.SINGLE, 
-                                       exportselection=False, font=('Helvetica', 10))
-        subject_2_tasks = get_val(1, "task-order").split("-") if "task-order" in self.file_editor.df.columns else list(self.tasks_params.keys())
-        for task in subject_2_tasks:
-            subject_2_task_list.insert(tk.END, task)
-        subject_2_task_list.grid(row=0, column=0, columnspan=2, sticky="ew")
-
-        # Task controls
-        task_controls_frame = ttk.Frame(content_frame)
-        task_controls_frame.grid(row=3, column=0, columnspan=2, pady=10, sticky="ew")
-        task_controls_frame.grid_columnconfigure(0, weight=1)
-        task_controls_frame.grid_columnconfigure(1, weight=1)
+        row += 1
+        subject_1_task_list.grid(row=row, column=0, columnspan=2, sticky="ew")
+        row += 1
 
         available_tasks = list(self.tasks_params.keys())
         subject_1_selected_task = tk.StringVar(value=available_tasks[0])
-        subject_2_selected_task = tk.StringVar(value=available_tasks[0])
 
         def update_task_list(listbox, tasks):
             listbox.delete(0, tk.END)
@@ -476,46 +467,40 @@ class ParameterEditorApp:
                 tasks.pop(selected[0])
                 update_task_list(listbox, tasks)
 
-        print(*available_tasks)
-        # Task selection for Subject 1
-        ttk.Label(task_controls_frame, text="Add Task to Subject 1:").grid(row=0, column=0, sticky="w")
-        ttk.OptionMenu(task_controls_frame, subject_1_selected_task, *available_tasks).grid(
-            row=1, column=0, sticky="ew", padx=5)
+        tk.OptionMenu(content_frame, subject_1_selected_task, *available_tasks).grid(row=row, column=0, columnspan=2, sticky="ew")
+        row += 1
 
-        # Task selection for Subject 2
-        ttk.Label(task_controls_frame, text="Add Task to Subject 2:").grid(row=0, column=1, sticky="w")
-        ttk.OptionMenu(task_controls_frame, subject_2_selected_task, *available_tasks).grid(
-            row=1, column=1, sticky="ew", padx=5)
+        btn_frame = tk.Frame(content_frame)
+        btn_frame.grid(row=row, column=0, columnspan=2, pady=5, sticky="ew")
+        for i in range(4): btn_frame.grid_columnconfigure(i, weight=1)
+        tk.Button(btn_frame, text="Add Task", command=lambda: add_task(subject_1_task_list, subject_1_tasks, subject_1_selected_task)).grid(row=0, column=0, sticky="ew")
+        tk.Button(btn_frame, text="Delete Task", command=lambda: delete_task(subject_1_task_list, subject_1_tasks)).grid(row=0, column=1, sticky="ew")
+        tk.Button(btn_frame, text="Move Up", command=lambda: move_up(subject_1_task_list, subject_1_tasks)).grid(row=0, column=2, sticky="ew")
+        tk.Button(btn_frame, text="Move Down", command=lambda: move_down(subject_1_task_list, subject_1_tasks)).grid(row=0, column=3, sticky="ew")
+        row += 1
 
-        # Task action buttons for Subject 1
-        subject_1_btn_frame = ttk.Frame(task_controls_frame)
-        subject_1_btn_frame.grid(row=2, column=0, pady=5, sticky="ew")
-        
-        ttk.Button(subject_1_btn_frame, text="Add", style='Secondary.TButton',
-                 command=lambda: add_task(subject_1_task_list, subject_1_tasks, subject_1_selected_task)).pack(side=tk.LEFT, expand=True)
-        ttk.Button(subject_1_btn_frame, text="Delete", style='Secondary.TButton',
-                 command=lambda: delete_task(subject_1_task_list, subject_1_tasks)).pack(side=tk.LEFT, expand=True)
-        ttk.Button(subject_1_btn_frame, text="Move Up", style='Secondary.TButton',
-                 command=lambda: move_up(subject_1_task_list, subject_1_tasks)).pack(side=tk.LEFT, expand=True)
-        ttk.Button(subject_1_btn_frame, text="Move Down", style='Secondary.TButton',
-                 command=lambda: move_down(subject_1_task_list, subject_1_tasks)).pack(side=tk.LEFT, expand=True)
+        # Subject 2 task section
+        tk.Label(content_frame, text="Subject 2 Task Order", font=("Arial", 10, "bold")).grid(row=row, column=0, pady=10, sticky="w", columnspan=2)
+        subject_2_task_list = tk.Listbox(content_frame, height=5, selectmode=tk.SINGLE, exportselection=False, font=("Arial", 10))
+        subject_2_tasks = get_val(1, "task-order").split("-") if "task-order" in self.file_editor.df.columns else list(self.tasks_params.keys())
+        for task in subject_2_tasks:
+            subject_2_task_list.insert(tk.END, task)
+        row += 1
+        subject_2_task_list.grid(row=row, column=0, columnspan=2, sticky="ew")
+        row += 1
 
-        # Task action buttons for Subject 2
-        subject_2_btn_frame = ttk.Frame(task_controls_frame)
-        subject_2_btn_frame.grid(row=2, column=1, pady=5, sticky="ew")
-        
-        ttk.Button(subject_2_btn_frame, text="Add", style='Secondary.TButton',
-                 command=lambda: add_task(subject_2_task_list, subject_2_tasks, subject_2_selected_task)).pack(side=tk.LEFT, expand=True)
-        ttk.Button(subject_2_btn_frame, text="Delete", style='Secondary.TButton',
-                 command=lambda: delete_task(subject_2_task_list, subject_2_tasks)).pack(side=tk.LEFT, expand=True)
-        ttk.Button(subject_2_btn_frame, text="Move Up", style='Secondary.TButton',
-                 command=lambda: move_up(subject_2_task_list, subject_2_tasks)).pack(side=tk.LEFT, expand=True)
-        ttk.Button(subject_2_btn_frame, text="Move Down", style='Secondary.TButton',
-                 command=lambda: move_down(subject_2_task_list, subject_2_tasks)).pack(side=tk.LEFT, expand=True)
+        subject_2_selected_task = tk.StringVar(value=available_tasks[0])
+        tk.OptionMenu(content_frame, subject_2_selected_task, *available_tasks).grid(row=row, column=0, columnspan=2, sticky="ew")
+        row += 1
 
-        # Save button
-        button_frame = ttk.Frame(content_frame)
-        button_frame.grid(row=4, column=0, columnspan=2, pady=20)
+        btn_frame2 = tk.Frame(content_frame)
+        btn_frame2.grid(row=row, column=0, columnspan=2, pady=5, sticky="ew")
+        for i in range(4): btn_frame2.grid_columnconfigure(i, weight=1)
+        tk.Button(btn_frame2, text="Add Task", command=lambda: add_task(subject_2_task_list, subject_2_tasks, subject_2_selected_task)).grid(row=0, column=0, sticky="ew")
+        tk.Button(btn_frame2, text="Delete Task", command=lambda: delete_task(subject_2_task_list, subject_2_tasks)).grid(row=0, column=1, sticky="ew")
+        tk.Button(btn_frame2, text="Move Up", command=lambda: move_up(subject_2_task_list, subject_2_tasks)).grid(row=0, column=2, sticky="ew")
+        tk.Button(btn_frame2, text="Move Down", command=lambda: move_down(subject_2_task_list, subject_2_tasks)).grid(row=0, column=3, sticky="ew")
+        row += 1
 
         def save_changes():
             try:
@@ -542,13 +527,13 @@ class ParameterEditorApp:
             except Exception as e:
                 messagebox.showerror("Error", str(e))
 
-        ttk.Button(button_frame, text="Save Changes", command=save_changes,
-                 style='Success.TButton').pack(pady=10, ipadx=20)
-
+        tk.Button(content_frame, text="Save Changes", command=save_changes,
+                padx=10, pady=5, font=("Arial", 10, "bold")).grid(row=row, column=0, columnspan=2, pady=20, sticky="ew")
+        
     def edit_task_parameters(self, task_name):
         if self.file_editor is None:
             messagebox.showwarning("Warning", "Please load a parameter file first!")
-            self.status_var.set("Warning: No parameter file loaded")
+            self.status_var.set(self.pad_to_warning_length_centered("Warning: No parameter file loaded"))
             return
 
         window = tk.Toplevel(self.root)
@@ -634,10 +619,10 @@ class ParameterEditorApp:
                     
                 messagebox.showinfo("Success", f"{task_name} Parameters updated successfully!")
                 window.destroy()
-                self.status_var.set(f"Updated {task_name} parameters")
+                self.status_var.set(self.pad_to_warning_length_centered(f"Updated {task_name} parameters"))
             except Exception as e:
                 messagebox.showerror("Error", str(e))
-                self.status_var.set(f"Error updating {task_name} parameters")
+                self.status_var.set(self.pad_to_warning_length_centered(f"Error updating {task_name} parameters"))
 
         ttk.Button(button_frame, text="Save Changes", command=save_changes,
                  style='Success.TButton').pack(pady=10, ipadx=20)
@@ -649,7 +634,7 @@ class ParameterEditorApp:
                                     "Are you sure you want to reset all progress?\nThis action cannot be undone."):
                 return
                 
-            self.status_var.set("Resetting progress...")
+            self.status_var.set(self.pad_to_warning_length_centered("Resetting progress..."))
             self.root.update()
             
             # Define the path to the reset script
@@ -659,7 +644,7 @@ class ParameterEditorApp:
             # Check if the file exists
             if not os.path.exists(script_path):
                 messagebox.showerror("Error", "reset_progress.py not found in current directory!")
-                self.status_var.set("Error: Reset script not found")
+                self.status_var.set(self.pad_to_warning_length_centered("Error: Reset script not found"))
                 return
 
             # Run the reset script
@@ -667,14 +652,14 @@ class ParameterEditorApp:
             
             if result.returncode == 0:
                 messagebox.showinfo("Success", "Progress reset successfully!")
-                self.status_var.set("Progress reset complete")
+                self.status_var.set(self.pad_to_warning_length_centered("Progress reset complete"))
             else:
                 messagebox.showerror("Error", f"Failed to reset progress:\n{result.stderr}")
-                self.status_var.set("Error resetting progress")
+                self.status_var.set(self.pad_to_warning_length_centered("Error resetting progress"))
                 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to run reset script: {e}")
-            self.status_var.set(f"Error: {str(e)}")
+            self.status_var.set(self.pad_to_warning_length_centered(f"Error: {str(e)}"))
 
 
 # Run the application
