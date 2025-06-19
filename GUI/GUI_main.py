@@ -8,6 +8,8 @@ import shlex
 import serial
 import serial.tools.list_ports
 from threading import Thread
+
+import ToggleButton
 try:
     # checks if you have access to RPi.GPIO, which is available inside RPi
     import RPi.GPIO as GPIO
@@ -178,8 +180,8 @@ class ParameterEditorApp:
             self.task_buttons[task] = button
 
         # Start Program Button - centered with padding
-        start_btn = tk.Button(content_frame, text="Start Program", 
-                             command=self.start_program, width=20, pady=5)
+        start_btn = ToggleButton.PumpToggleButton(content_frame, 
+                             callback=self.on_toggle, width=20, pady=5)
         start_btn.grid(row=5, column=1, pady=5, sticky="ew")
 
         # Reset Progress Button
@@ -193,25 +195,18 @@ class ParameterEditorApp:
         rfid_btn.grid(row=5, column=0, padx=5, pady=5, sticky="ew")
 
         # Pump toggle button
-        pump_btn = tk.Button(content_frame, text="Toggle Pump", 
-                            command=self.toggle_pump, width=20, pady=5)
-        pump_btn.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
+        pump_btn = tk.Button(root, text="Start Program", command=self.start_program,
+                                width=20, pady=5, font=("Arial", 12))
 
+        pump_btn.grid(row=4, column=0, padx=5, pady=5, sticky="ew")
 
-
-    def toggle_pump(self, channel = 17):
+    def on_toggle(self, state):
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(channel, GPIO.OUT)
-        
-        if not self.pump_status:
-            self.pump_status = True
-            GPIO.output(channel, GPIO.LOW)
-            messagebox.showwarning("Warning", "Pump is on! Don't close the program until you hit the toggle button again to turn it off!")
+        GPIO.setup(17, GPIO.OUT)
+        if state:
+            GPIO.output(17, GPIO.LOW)
         else:
-            self.pump_status = False
-            GPIO.output(channel, GPIO.HIGH)
-            messagebox.showinfo("Success", "Pump is now off!")
-
+            GPIO.output(17, GPIO.HIGH)
 
     def start_program(self):
         try:
