@@ -180,7 +180,7 @@ class ParameterEditorApp:
         # Start Program Button - centered with padding
         start_btn = tk.Button(content_frame, text="Start Program", 
                              command=self.start_program, width=20, pady=5)
-        start_btn.grid(row=5, column=1, pady=20, sticky="ew")
+        start_btn.grid(row=5, column=1, pady=5, sticky="ew")
 
         # Reset Progress Button
         reset_btn = tk.Button(content_frame, text="Reset Progress", 
@@ -190,12 +190,12 @@ class ParameterEditorApp:
         # RFID Test Button
         rfid_btn = tk.Button(content_frame, text="RFID Test", 
                             command=self.rfid_test, width=20, pady=5)
-        rfid_btn.grid(row=5, column=0, padx=5, pady=10, sticky="ew")
+        rfid_btn.grid(row=5, column=0, padx=5, pady=5, sticky="ew")
 
         # Pump toggle button
         pump_btn = tk.Button(content_frame, text="Toggle Pump", 
                             command=self.toggle_pump, width=20, pady=5)
-        pump_btn.grid(row=4, column=1, padx=5, pady=10, sticky="ew")
+        pump_btn.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
 
 
 
