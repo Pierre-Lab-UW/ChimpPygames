@@ -195,10 +195,9 @@ class ParameterEditorApp:
         rfid_btn.grid(row=5, column=0, padx=5, pady=5, sticky="ew")
 
         # Pump toggle button
-        pump_btn = tk.Button(root, text="Start Program", command=self.start_program,
-                                width=20, pady=5, font=("Arial", 12))
-
-        pump_btn.grid(row=4, column=0, padx=5, pady=5, sticky="ew")
+        pump_btn = tk.Button(content_frame, text="Start Program", 
+                            command=self.start_program, width=20, pady=5)
+        pump_btn.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
 
     def on_toggle(self, state):
         GPIO.setmode(GPIO.BCM)
