@@ -46,7 +46,7 @@ class ParameterEditorApp:
         self.pump_status = False
 
         # Set minimum window size
-        self.root.minsize(400, 500)
+        self.root.minsize(300, 400)
         
         # UI Elements
         self.create_scrollable_frame()
@@ -182,22 +182,22 @@ class ParameterEditorApp:
         # Start Program Button - centered with padding
         start_btn = ToggleButton.PumpToggleButton(content_frame, 
                              callback=self.on_toggle, width=20, pady=5)
-        start_btn.grid(row=5, column=1, pady=5, sticky="ew")
+        start_btn.grid(row=4, column=1, padx=10, pady=5, sticky="ew")
 
         # Reset Progress Button
         reset_btn = tk.Button(content_frame, text="Reset Progress", 
                      command=self.reset_progress, width=20, pady=5)
-        reset_btn.grid(row=4, column=0, padx=5, sticky="ew")
+        reset_btn.grid(row=2, column=1, padx=10, sticky="ew")
 
         # RFID Test Button
         rfid_btn = tk.Button(content_frame, text="RFID Test", 
                             command=self.rfid_test, width=20, pady=5)
-        rfid_btn.grid(row=5, column=0, padx=5, pady=5, sticky="ew")
+        rfid_btn.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
 
         # Pump toggle button
         pump_btn = tk.Button(content_frame, text="Start Program", 
-                            command=self.start_program, width=20, pady=5)
-        pump_btn.grid(row=4, column=1, padx=5, pady=5, sticky="ew")
+                            command=self.start_program, width=20, padx=10, pady=5)
+        pump_btn.grid(row=1, column=1, padx=10, pady=5, sticky="ew")
 
     def on_toggle(self, state):
         GPIO.setmode(GPIO.BCM)
