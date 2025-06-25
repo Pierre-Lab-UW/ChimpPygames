@@ -1,5 +1,6 @@
 *.pyc
 _data/
 errorlogs/
+_progress/
 global_params.txt
 *.pyc

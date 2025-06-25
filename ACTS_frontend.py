@@ -254,8 +254,51 @@ class FrontEnd(object):
                     self.m_params[monkey_name] = {}
                     for j, varname in enumerate(varnames):
                         self.m_params[monkey_name][varname] = values[j]
+
         log(message='loaded primate params')
-        
+
+        for monkey in self.m_params:
+            self.create_files(monkey)
+    
+    
+    def create_files(self, subdirectory, should_overwrite_if_exists=False):
+        # Dictionary of files and their default contents
+        files_with_contents = {
+            "progress_to_criterion.txt": "",
+            "progress_to_trial.txt": "",
+            "progress_to_trials.txt": "0",
+            "set-ix.txt": "0",
+            "set-neg.txt": "grey___image357.jpg",
+            "set-pos.txt": "pink___image811.jpg",
+            "set-timestamp.txt": "1729541129.171029",
+            "side_tracking.txt": "",
+            "task-ix.txt": "0",
+            "TI-phase.txt": "learning",
+            "TI-set-ix.txt": "1",
+            "TI-set-neg.txt": "pink___image1233.jpg",
+            "TI-set-pos.txt": "white___image815.jpg",
+            "TI-set-timestamp.txt": "",
+            "TouchTrain-size.txt": "150"
+        }
+
+        log(message='creating progress files for '+str(subdirectory)+'...')
+        if os.path.isdir(os.path.join("_progress", subdirectory)): 
+            if not should_overwrite_if_exists:
+                log(message='skipping progress file creation for '+str(subdirectory)+' since it already exists.')
+                return
+            else:
+                log(message='progress files for '+str(subdirectory)+'exist---overwriting...')
+        # Create the subdirectory if it doesn't exist
+        os.makedirs(os.path.join("_progress",subdirectory), exist_ok=should_overwrite_if_exists)
+
+        # Create each file with default content
+        for file_name, content in files_with_contents.items():
+            file_path = os.path.join(os.path.join("_progress", subdirectory), file_name)
+            with open(file_path, 'w') as f:
+                f.write(content)
+        log(message='sucessfully created progress files for '+str(subdirectory)+'.')
+    
+
     def main(self):
 
         # INIT READER VARS
