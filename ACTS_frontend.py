@@ -405,7 +405,7 @@ class FrontEnd(object):
         # #
         while not done:
             program_on = True
-            self.weekly_progress_reset()
+            #self.weekly_progress_reset()
                 
             # once daily, reload primate params when it becomes 3AM
             # #
